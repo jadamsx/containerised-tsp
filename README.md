@@ -1,0 +1,3 @@
+# Traveling Salesman Problem
+
+The goal of this project is to rethink the classic parallelization process of TSP solutions we have seen previously, to create containerized solutions. Traditional solutions use the computational power available on a single machine and are therefore limited to the number of CPU cores on said machine. However, a containerized approach will allow us to scale up across multiple machines to overcome this limitation.
