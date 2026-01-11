@@ -12,7 +12,7 @@ chai.use(chaiHttp);
 const url = "http://localhost:3000";
 
 // Read all JSON files in the 'graphs/' directory
-const graphsDir = path.join(__dirname, "../graphs");
+const graphsDir = path.join(__dirname, "../../../graphs");
 const graphFiles = fs
   .readdirSync(graphsDir)
   .filter((file) => file.endsWith(".json"));
