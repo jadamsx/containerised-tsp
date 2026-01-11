@@ -9,10 +9,10 @@ const fs = require("fs");
 chai.use(chaiHttp);
 
 // Set the base URL for API requests
-const url = "http://localhost:3010";
+const url = "http://localhost:3020";
 
 // Read all JSON files in the 'graphs/' directory
-const graphsDir = path.join(__dirname, "../graphs");
+const graphsDir = path.join(__dirname, "../../../graphs");
 const graphFiles = fs
   .readdirSync(graphsDir)
   .filter((file) => file.endsWith(".json"));
@@ -23,16 +23,18 @@ const graphs = graphFiles.map((file) => require(path.join(graphsDir, file)));
 // Sort the graphs array by the number of cities in each graph in ascending order
 graphs.sort((a, b) => a.coordinates.length - b.coordinates.length);
 
+graphs.splice(-5); // Remove larger graphs that are not feasible to test due to time constraints
+
 function calculateAccuracy(actualCost, calculatedCost) {
   const difference = calculatedCost - actualCost;
   const accuracy = ((actualCost - difference) / actualCost) * 100;
   return accuracy;
 }
 
-// Describe the test suite for Cheapest-Insertion-Service API
-describe("Cheapest-Insertion-Service API", () => {
+// Describe the test suite for Dynamic-Programming-Service API
+describe("Dynamic-Programming-Service API", () => {
   for (const graph of graphs) {
-    it(`Returns a valid tour and cost for ${graph.name}!`, (done) => {
+    it(`Returns the most optimal tour and its cost for ${graph.name}!`, (done) => {
       const testData = { graph: graph };
 
       // Make a GET request to /solve chosen graph
@@ -53,8 +55,7 @@ describe("Cheapest-Insertion-Service API", () => {
             testData.graph.cost,
             res.body.Cost
           );
-          expect(accuracy).to.be.at.least(50);
-          expect(accuracy).to.be.at.most(100);
+          expect(accuracy).to.equal(100); //Should ALWAYS BE 100% ACCURATE
           done(); // Signal the end of the test
         });
     });
