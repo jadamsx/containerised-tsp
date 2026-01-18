@@ -25,9 +25,7 @@ class NearestNeighborTSP {
     let minDistance = Infinity;
     let nearestNeighbor = -1;
 
-    // Iterate through all cities
     for (let i = 0; i < this.numCities; i++) {
-      // Check if the city is unvisited and closer than the current nearest neighbor
       if (!this.visited[i]) {
         const [x1, y1] = this.coordinates[currentCity];
         const [x2, y2] = this.coordinates[i];
@@ -51,12 +49,10 @@ class NearestNeighborTSP {
     let tour = [];
     let totalDistance = 0;
 
-    // Start from the first city
     let currentCity = 0;
     this.visited[currentCity] = true;
     tour.push(currentCity);
 
-    // Visit the nearest neighbors iteratively
     for (let i = 1; i < this.numCities; i++) {
       let nearestNeighbor = this.findNearestNeighbor(currentCity);
       this.visited[nearestNeighbor] = true;
@@ -76,7 +72,6 @@ class NearestNeighborTSP {
       currentCity = nearestNeighbor;
     }
 
-    // Return to the starting city to complete the tour
     tour.push(tour[0]);
     totalDistance += Math.sqrt(
       Math.pow(

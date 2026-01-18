@@ -1,26 +1,20 @@
-// Import necessary modules
 const chai = require("chai");
 const path = require("path");
 const chaiHttp = require("chai-http");
 const { expect } = chai;
 const fs = require("fs");
 
-// Use Chai HTTP for making HTTP requests
 chai.use(chaiHttp);
 
-// Set the base URL for API requests
 const url = "http://localhost:3030";
 
-// Read all JSON files in the 'graphs/' directory
-const graphsDir = path.join(__dirname, "../../../graphs");
+const graphsDir = path.join(__dirname, "../../../shared/graphs");
 const graphFiles = fs
   .readdirSync(graphsDir)
   .filter((file) => file.endsWith(".json"));
 
-// Create an array to store all graphs
 const graphs = graphFiles.map((file) => require(path.join(graphsDir, file)));
 
-// Sort the graphs array by the number of cities in each graph in ascending order
 graphs.sort((a, b) => a.coordinates.length - b.coordinates.length);
 
 graphs.splice(-5); // Remove larger graphs that are not feasible to test due to time constraints
@@ -31,19 +25,16 @@ function calculateAccuracy(actualCost, calculatedCost) {
   return accuracy;
 }
 
-// Describe the test suite for Brute-Force-Service API
 describe("Brute-Force-Service API", () => {
   for (const graph of graphs) {
     it(`Returns the most optimal tour and its cost for ${graph.name}!`, (done) => {
       const testData = { graph: graph };
 
-      // Make a POST request to /solve to start the solution
       chai
         .request(url)
         .post("/solve")
         .send(testData)
-        .end(async (err, res) => {
-          // Validate the response for starting the solution
+        .end((err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
           expect(res.body).to.have.property(
@@ -53,26 +44,22 @@ describe("Brute-Force-Service API", () => {
 
           let result = null;
 
-          // Continuously check for the result until it's not null
           while (!result) {
             try {
-              // Make a GET request to /result to get the result
               const resultResponse = await chai.request(url).get("/result");
               result = resultResponse.body.result;
             } catch (error) {
-              // Ignore the error and continue checking
               console.error("Error:", error.message);
             }
           }
 
-          // Validate the result
           expect(result).to.have.property("Tour");
           expect(result).to.have.property("Cost");
           expect(result).to.have.property("Time");
 
           const accuracy = calculateAccuracy(testData.graph.cost, result.Cost);
-          expect(accuracy).to.equal(100); // Should ALWAYS BE 100% ACCURATE
-          done(); // Signal the end of the test
+          expect(accuracy).to.equal(100); // Should always be 100% accurate
+          done();
         });
     });
   }

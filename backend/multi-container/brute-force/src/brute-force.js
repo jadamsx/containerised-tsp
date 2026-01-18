@@ -21,10 +21,10 @@ class BruteForceTSP {
    * @returns {number[]} - The generated path represented by an array of city indices.
    */
   generatePath(index) {
-    const path = [0]; // Start each path with city 0
+    const path = [0];
     const availableCities = Array.from(Array(this.numCities - 1).keys()).map(
       (i) => i + 1
-    ); // Exclude city 0
+    );
 
     for (let j = this.numCities - 2; j >= 0; j--) {
       const factorial = this.factorial(j);
@@ -34,7 +34,7 @@ class BruteForceTSP {
       index %= factorial;
     }
 
-    path.push(path[0]); // Add the starting city to the end to complete the loop
+    path.push(path[0]);
     return path;
   }
 
@@ -47,7 +47,6 @@ class BruteForceTSP {
     let distance = 0;
     const n = path.length;
 
-    // Calculate the distance between each consecutive pair of cities in the path
     for (let i = 0; i < n - 1; i++) {
       const cityIndex1 = path[i];
       const cityIndex2 = path[i + 1];

@@ -70,7 +70,6 @@ class CheapestInsertionTSP {
    * @returns {Object} - An object containing the tour and the total distance of the tour.
    */
   solve() {
-    // Start with the first two cities in the tour
     this.tour.push(0);
     this.tour.push(1);
     this.unvisitedCities.splice(this.unvisitedCities.indexOf(0), 1);
@@ -95,7 +94,6 @@ class CheapestInsertionTSP {
         }
       }
 
-      // Insert the new city in the cheapest position
       this.tour.splice(
         cheapestInsertion.position,
         0,
@@ -107,10 +105,8 @@ class CheapestInsertionTSP {
       );
     }
 
-    // Return to the starting city
     this.tour.push(this.tour[0]);
 
-    // Calculate the total distance of the tour
     const totalDistance = this.calculateTotalDistance();
 
     return { tour: this.tour, totalDistance };

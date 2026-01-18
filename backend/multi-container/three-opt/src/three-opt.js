@@ -26,7 +26,6 @@ class ThreeOptTSP {
     let distance = 0;
     const n = path.length;
 
-    // Calculate the distance between each consecutive pair of cities in the path
     for (let i = 0; i < n - 1; i++) {
       const cityIndex1 = path[i];
       const cityIndex2 = path[i + 1];
@@ -61,7 +60,6 @@ class ThreeOptTSP {
    * @returns {number[]} - The new tour after the 3-opt swap.
    */
   threeOptSwap(tour, i, j, k) {
-    // Construct the new tour based on the specified swap
     const newTour = tour
       .slice(0, i + 1)
       .concat(tour.slice(j + 1, k + 1).reverse())
