@@ -23,7 +23,7 @@ graphs = graphs.slice(0,4); // Remove larger graphs that are not feasible to tes
 
 describe("Nearest Neighbor Algorithm", () => {
   for (const graph of graphs) {
-    it(`Returns a reasonably optimal tour and its cost for ${graph.name}!`, (done) => {
+    it(`Returns a reasonably optimal tour and its cost for ${graph.name}!`, function(done) {
       this.timeout(30000);
 
       const tspInstance = new NearestNeighborTSP(graph);
