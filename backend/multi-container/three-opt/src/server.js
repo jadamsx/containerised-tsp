@@ -9,17 +9,14 @@ const queueApp = express();
 const ipAddress = ip.address();
 const ipPort = 3040;
 
-// Variables to store result and task data
 let result = null;
 let taskQueue = [];
 let resultQueue = [];
 let id;
 
-// Middleware to parse JSON requests
 app.use(express.json());
 queueApp.use(express.json());
 
-// Set the view engine and views directory for EJS templates
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
@@ -36,7 +33,6 @@ app.get("/", (req, res) => {
  * @param {Object} res - The HTTP response object.
  */
 app.post("/solve", async (req, res) => {
-  // Reset result and task data
   result = null;
   taskQueue = [];
   resultQueue = [];
@@ -54,8 +50,7 @@ app.post("/solve", async (req, res) => {
  */
 app.get("/result", (req, res) => {
   res.json({ result: result });
-  result = null; // Reset result after sending
-  return;
+  result = null;  return;
 });
 
 /**
@@ -81,7 +76,7 @@ queueApp.get("/getTask", (req, res) => {
       return;
     }
   }
-  res.json({ task: false }); // If no task is available
+  res.json({ task: false });
   return;
 });
 
@@ -98,7 +93,6 @@ queueApp.post("/returnTask", (req, res) => {
 
     console.log("Received Result: ", resultQueue.length);
 
-    // Mark task as completed
     for (let i = taskQueue.length - 1; i >= 0; --i) {
       if (taskQueue.index === result.index) {
         taskQueue[i].completed = true;
@@ -120,7 +114,6 @@ queueApp.post("/returnTask", (req, res) => {
 async function solve(graph) {
   console.log("\n--New Solution Started--");
 
-  // Measure the start time for performance evaluation
   const startTime = performance.now();
 
   const threeOptInstance = new ThreeOptTSP(graph);
@@ -136,19 +129,15 @@ async function solve(graph) {
   console.log(" Number Tasks Created: ", tasks.length);
 
   try {
-    // Send tasks to the task queue
     addTasksToQueue(tasks, id);
 
-    // Call checkTasksCompletion function and get the result
     const { shortestPath, shortestDistance } = await checkTasksCompletion(
       shortestTour,
       shortestDist
     );
 
-    // Measure the end time for performance evaluation
     const endTime = performance.now();
 
-    // Calculate the elapsed time
     const elapsedTime = endTime - startTime;
 
     console.log("--Solution Complete--");
@@ -179,13 +168,11 @@ async function checkTasksCompletion(shortestPath, shortestDistance) {
   }
 
   for (const result of resultQueue) {
-    // Compare the received tour with the shortest tour found so far
     if (result.totalDistance < shortestDistance) {
       shortestDistance = result.totalDistance;
       shortestPath = result.tour;
     }
   }
-  // All tasks are completed, send the final result
   return { shortestPath, shortestDistance };
 }
 
@@ -229,7 +216,6 @@ function getTimeout(collectionTime) {
   return timeDifferenceInMinutes > timeoutValue;
 }
 
-// Start the Express servers
 app.listen(
   ipPort,
   console.log(`Master listening to ${ipAddress}:${ipPort} !!!`)

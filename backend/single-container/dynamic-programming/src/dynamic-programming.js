@@ -19,7 +19,7 @@ class DynamicProgrammingTSP {
    * @returns {number[]} - The generated path represented by an array of city indices.
    */
   generatePath(index) {
-    const path = [0]; // Start each path with city 0
+    const path = [0];
     const availableCities = Array.from(Array(this.numCities - 1).keys()).map(
       (i) => i + 1
     ); // Exclude city 0
@@ -45,7 +45,7 @@ class DynamicProgrammingTSP {
     let distance = 0;
     const n = path.length;
 
-    // Calculate the distance between each consecutive pair of cities in the path
+
     for (let i = 0; i < n - 1; i++) {
       const cityIndex1 = path[i];
       const cityIndex2 = path[i + 1];

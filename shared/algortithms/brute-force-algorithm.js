@@ -24,7 +24,7 @@ class BruteForceTSP {
     const path = [0];
     const availableCities = Array.from(Array(this.numCities - 1).keys()).map(
       (i) => i + 1
-    );
+    ); // Exclude city 0
 
     for (let j = this.numCities - 2; j >= 0; j--) {
       const factorial = this.factorial(j);
@@ -34,7 +34,7 @@ class BruteForceTSP {
       index %= factorial;
     }
 
-    path.push(path[0]);
+      path.push(path[0]);
     return path;
   }
 
@@ -46,6 +46,7 @@ class BruteForceTSP {
   calculatePathDistance(path) {
     let distance = 0;
     const n = path.length;
+
 
     for (let i = 0; i < n - 1; i++) {
       const cityIndex1 = path[i];
@@ -101,7 +102,7 @@ class BruteForceTSP {
    */
   createTasks() {
     const possibilities = Math.ceil(this.factorial(this.numCities - 1));
-    const max = 10000000;
+    const max = 20000000;
     const numTasks = Math.ceil(possibilities / max);
     const taskSize = Math.ceil(possibilities / numTasks);
     const tasks = [];
@@ -126,7 +127,7 @@ class BruteForceTSP {
    * @returns {Object} - An object containing the shortest tour and the total distance of the tour.
    */
   solve() {
-    const tasks = this.createTasks();
+    const tasks = this.createTasks("id");
     let tour = null;
     let totalDistance = Infinity;
 
@@ -147,3 +148,19 @@ class BruteForceTSP {
 }
 
 module.exports = { BruteForceTSP };
+
+// Example Usage:
+// const data = {
+//   name: "Sample TSP Instance",
+//   coordinates: [
+//     [0, 0],
+//     [1, 2],
+//     [3, 1],
+//     [4, 3],
+//   ],
+// };
+
+// const tspInstance = new BruteForceTSP(data);
+// const { tour, totalDistance } = tspInstance.solve();
+// console.log("Optimal Tour: ", tour);
+// console.log("Total Distance: ", totalDistance);

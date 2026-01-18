@@ -1,4 +1,4 @@
-const { NearestNeighborTSP } = require("./nearest-neighbour.js");
+const { NearestNeighborTSP } = require("./nearest-neighbour-algorithm");
 
 /**
  * Represents a solution to the Traveling Salesman Problem (TSP)
@@ -9,6 +9,7 @@ class ThreeOptTSP {
   /**
    * Initializes the ThreeOptTSP instance.
    * @param {Object} data - TSPLIB formatted data.
+   * @param {string} data.name - Name of the graph.
    * @param {number[][]} data.coordinates - Array of city coordinates.
    */
   constructor(data) {
@@ -25,6 +26,7 @@ class ThreeOptTSP {
   calculatePathDistance(path) {
     let distance = 0;
     const n = path.length;
+
 
     for (let i = 0; i < n - 1; i++) {
       const cityIndex1 = path[i];
@@ -60,6 +62,7 @@ class ThreeOptTSP {
    * @returns {number[]} - The new tour after the 3-opt swap.
    */
   threeOptSwap(tour, i, j, k) {
+    // Construct the new tour based on the specified swap
     const newTour = tour
       .slice(0, i + 1)
       .concat(tour.slice(j + 1, k + 1).reverse())
@@ -204,13 +207,11 @@ class ThreeOptTSP {
     let { initialTour, initialDistance } = this.getInitialTour();
     console.log("Initial Distance: ", initialDistance);
 
-    let { shortestTour, shortestDist, possibleTours } = this.findPossibleTours(
-      initialTour,
-      initialDistance
-    );
+    let { shortestTour, shortestDistance, possibleTours } =
+      this.findPossibleTours(initialTour, initialDistance);
 
     let tasks = this.createTasks(possibleTours);
-    let totalDistance = shortestDist;
+    let totalDistance = shortestDistance;
     let tour = shortestTour;
 
     console.log("Tasks Created: ", possibleTours.length);
@@ -226,8 +227,25 @@ class ThreeOptTSP {
         tour = shortestTour;
       }
     }
+
     return { tour, totalDistance };
   }
 }
 
 module.exports = { ThreeOptTSP };
+
+// Example Usage:
+// const data = {
+//   name: "Sample TSP Instance",
+//   coordinates: [
+//     [0, 0],
+//     [1, 2],
+//     [3, 1],
+//     [4, 3],
+//   ],
+// };
+
+// const tspInstance = new ThreeOptTSP(data);
+// const { tour, totalDistance } = tspInstance.solve();
+// console.log("Improved Tour: ", tour);
+// console.log("Total Distance: ", totalDistance);

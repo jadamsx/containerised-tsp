@@ -126,3 +126,19 @@ class CheapestInsertionTSP {
 }
 
 module.exports = { CheapestInsertionTSP };
+
+// Example Usage:
+// const data = {
+//   name: "Sample TSP Instance",
+//   coordinates: [
+//     [0, 0],
+//     [1, 2],
+//     [3, 1],
+//     [4, 3],
+//   ],
+// };
+
+// const tspInstance = new CheapestInsertionTSP(data);
+// const { tour, totalDistance } = tspInstance.solve();
+// console.log("Optimal Tour:", tour);
+// console.log("Total Distance:", totalDistance);

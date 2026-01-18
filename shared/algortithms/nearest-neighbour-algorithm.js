@@ -89,3 +89,19 @@ class NearestNeighborTSP {
 }
 
 module.exports = { NearestNeighborTSP };
+
+// Example Usage:
+// const data = {
+//   name: "Sample TSP Instance",
+//   coordinates: [
+//     [0, 0],
+//     [1, 2],
+//     [3, 1],
+//     [4, 3],
+//   ],
+// };
+
+// const tspInstance = new NearestNeighborTSP(data);
+// const { tour, totalDistance } = tspInstance.solve();
+// console.log("Optimal Tour: ", tour);
+// console.log("Total Distance: ", totalDistance);
