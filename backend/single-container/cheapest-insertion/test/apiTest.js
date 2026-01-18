@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 
 const url = "http://localhost:3010";
 
-const graphsDir = path.join(__dirname, "../../../shared/graphs");
+const graphsDir = path.join(__dirname, "../../../../shared/graphs");
 const graphFiles = fs
   .readdirSync(graphsDir)
   .filter((file) => file.endsWith(".json"));
@@ -19,7 +19,7 @@ graphs.sort((a, b) => a.coordinates.length - b.coordinates.length);
 
 function calculateAccuracy(expectedCost, calculatedCost) {
   const accuracy = (expectedCost / calculatedCost) * 100;
-  return accuracy.toFixed(2);
+  return accuracy;
 }
 
 describe("Cheapest-Insertion-Service API", () => {
@@ -31,7 +31,7 @@ describe("Cheapest-Insertion-Service API", () => {
         .request(url)
         .post("/solve")
         .send(testData)
-        .end((err, res) => {
+        .end(async (err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
 

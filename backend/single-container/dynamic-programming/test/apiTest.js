@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 
 const url = "http://localhost:3020";
 
-const graphsDir = path.join(__dirname, "../../../shared/graphs");
+const graphsDir = path.join(__dirname, "../../../../shared/graphs");
 const graphFiles = fs
   .readdirSync(graphsDir)
   .filter((file) => file.endsWith(".json"));
@@ -21,7 +21,7 @@ graphs.splice(-5); // Remove larger graphs that are not feasible to test due to 
 
 function calculateAccuracy(expectedCost, calculatedCost) {
   const accuracy = (expectedCost / calculatedCost) * 100;
-  return accuracy.toFixed(2);
+  return accuracy;
 }
 
 describe("Dynamic-Programming-Service API", () => {
@@ -33,7 +33,7 @@ describe("Dynamic-Programming-Service API", () => {
         .request(url)
         .post("/solve")
         .send(testData)
-        .end((err, res) => {
+        .end(async (err, res) => {
           expect(err).to.be.null;
           expect(res).to.have.status(200);
 

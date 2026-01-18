@@ -1,8 +1,7 @@
 const axios = require("axios");
 const { BruteForceTSP } = require("./brute-force");
 
-const masterUrl = "http://brute-force-master-ser1:3031";
-
+const masterUrl = process.env.BRUTE_FORCE_MASTER_URL || "http://localhost:3031";
 
 /**
  * Worker function to continuously check for tasks, execute them, and submit results.

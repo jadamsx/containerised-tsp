@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { ThreeOptTSP } = require("./three-opt");
 
-const masterUrl = "http://three-opt-master-ser1:3041";
+const masterUrl = process.env.THREE_OPT_MASTER_URL || "http://localhost:3041";
 
 /**
  * Worker function to continuously check for tasks, execute them, and submit results.
@@ -31,6 +31,7 @@ async function getNextTask() {
     const response = await axios.get(`${masterUrl}/getTask`);
     const task = response.data.task;
 
+    // Log whether a task is collected or not
     if (task) {
       console.log("\nNew task collected: ", task);
     } else {
@@ -53,8 +54,10 @@ async function getNextTask() {
  * @returns {Object} Result of the task.
  */
 function executeTask(id, tour, totalDistance, data) {
+  // Create an instance of ThreeOptTsp
   const threeOptInstance = new ThreeOptTSP(data);
 
+  // Generate paths chunk and find the shortest path
   const { shortestTour, shortestDistance } = threeOptInstance.improveTour(
     tour,
     totalDistance

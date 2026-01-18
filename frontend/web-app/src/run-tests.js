@@ -74,8 +74,7 @@ async function talkToService(url, graph) {
  */
 function calculateAccuracy(expectedCost, calculatedCost) {
   const accuracy = (expectedCost / calculatedCost) * 100;
-  return accuracy.toFixed(2);
-  return accuracy.toFixed(2);
+  return accuracy;
 }
 
 /**
