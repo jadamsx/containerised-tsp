@@ -19,7 +19,7 @@ function calculateAccuracy(expectedCost, calculatedCost) {
   return accuracy;
 }
 
-graphs.slice(0,4); // Remove larger graphs that are not feasible to test due to time constraints
+graphs = graphs.slice(0,4); // Remove larger graphs that are not feasible to test due to time constraints
 
 describe("Nearest Neighbor Algorithm", () => {
   for (const graph of graphs) {
