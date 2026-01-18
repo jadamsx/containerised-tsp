@@ -1,4 +1,4 @@
-# Traveling Salesman Problem - Containerized Solutions
+# Traveling Salesman Problem - Containerized Solution
 
 A containerized approach to solving the Traveling Salesman Problem (TSP) using multiple algorithms. This project demonstrates how distributed computing via containers allows TSP solutions to scale beyond a single machine's CPU cores.
 
