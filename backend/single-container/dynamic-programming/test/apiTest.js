@@ -26,7 +26,7 @@ function calculateAccuracy(expectedCost, calculatedCost) {
 
 describe("Dynamic-Programming-Service API", () => {
   for (const graph of graphs) {
-    it(`Returns a valid tour and cost for ${graph.name}!`, (done) => {
+    it(`Returns a valid tour and cost for ${graph.name}!`, function(done) {
       this.timeout(30000);
 
       const testData = { graph: graph };
