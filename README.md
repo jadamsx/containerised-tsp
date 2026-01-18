@@ -41,7 +41,7 @@ containerised-tsp/
 
 ### Local Development
 
-1. **Install dependencies** for all services:
+**Install dependencies:**
 ```bash
 npm install --prefix backend/multi-container/brute-force
 npm install --prefix backend/multi-container/three-opt
@@ -51,25 +51,17 @@ npm install --prefix backend/single-container/nearest-neighbour
 npm install --prefix frontend/web-app
 ```
 
-2. **Run integration tests** (tests algorithms directly without requiring running services):
+**Run tests:** Each service includes integration tests (algorithm-only) and API tests (full service):
 ```bash
-cd backend/multi-container/brute-force/test && npx mocha intergrationTest.js
-cd backend/multi-container/three-opt/test && npx mocha intergrationTest.js
-cd backend/single-container/dynamic-programming/test && npx mocha intergrationTest.js
-cd backend/single-container/cheapest-insertion/test && npx mocha intergrationTest.js
+# Integration test (no service required)
 cd backend/single-container/nearest-neighbour/test && npx mocha intergrationTest.js
+
+# API test (requires service running)
+node backend/single-container/nearest-neighbour/src/server.js  # Terminal 1
+cd backend/single-container/nearest-neighbour/test && npx mocha apiTest.js  # Terminal 2
 ```
 
-3. **Run services locally**:
-```bash
-# In separate terminals
-node backend/multi-container/brute-force/src/server.js
-node backend/multi-container/three-opt/src/server.js
-node backend/single-container/dynamic-programming/src/server.js
-node backend/single-container/cheapest-insertion/src/server.js
-node backend/single-container/nearest-neighbour/src/server.js
-node frontend/web-app/src/server.js
-```
+Repeat the same pattern for other services (brute-force, three-opt, dynamic-programming, cheapest-insertion).
 
 ## Service Documentation
 
@@ -90,19 +82,6 @@ node frontend/web-app/src/server.js
 | Cheapest Insertion | ✗ Heuristic | O(n²) | 50-100% | Large graphs, reasonable |
 | Nearest Neighbour | ✗ Heuristic | O(n²) | 50-100% | Large graphs, fast |
 
-## Local Testing vs. Distributed Deployment
-
-### Local (Development)
-- Run integration tests directly (no service required)
-- Single machine execution
-- Best for algorithm validation and development
-
-### Distributed (Kubernetes)
-- Multi-container/multi-machine deployment
-- Master-worker architecture for Brute Force and Three-Opt
-- Scales horizontally across multiple nodes
-- Production ready with service mesh
-
 ## Environment Variables
 
 Each service supports environment variable configuration for distributed deployment:
@@ -118,8 +97,4 @@ docker build -t brute-force-service ./backend/multi-container/brute-force
 docker run -p 3030:3030 -p 3031:3031 brute-force-service
 ```
 
-## Performance Notes
 
-- Brute Force tests may take 10-30 seconds for larger graphs due to factorial time complexity
-- Integration tests have 30-second timeouts for computational algorithms
-- For graphs with 11+ cities, consider using heuristic algorithms (Three-Opt, Cheapest Insertion, Nearest Neighbour)
