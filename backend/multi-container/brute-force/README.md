@@ -105,14 +105,6 @@ npx mocha apiTest.js
 
 Tests the HTTP API and distributed system.
 
-## Performance
-
-| Cities | Time | Permutations |
-|--------|------|--------------|
-| 8 | ~10ms | 40,320 |
-| 10 | ~100ms | 3,628,800 |
-| 11 | ~5s | 39,916,800 |
-| 12 | ~60s | 479,001,600 |
 
 ## Docker
 
