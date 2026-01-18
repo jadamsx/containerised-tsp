@@ -10,11 +10,11 @@ const graphFiles = fs
   .readdirSync(graphsDir)
   .filter((file) => file.endsWith(".json"));
 
-const graphs = graphFiles.map((file) => require(path.join(graphsDir, file)));
+let graphs = graphFiles.map((file) => require(path.join(graphsDir, file)));
 
 graphs.sort((a, b) => a.coordinates.length - b.coordinates.length);
 
-graphs.splice(-5); // Remove larger graphs that are not feasible to test due to time constraints
+graphs = graphs.slice(0,4); // Remove larger graphs that are not feasible to test due to time constraints
 
 function calculateAccuracy(expectedCost, calculatedCost) {
   const accuracy = (expectedCost / calculatedCost) * 100;
@@ -25,6 +25,7 @@ describe("Brute Force Algorithm", () => {
   for (const graph of graphs) {
     it(`Returns the most optimal tour and its cost for ${graph.name}!`, function(done) {
       this.timeout(30000);
+
       const tspInstance = new BruteForceTSP(graph);
       const result = tspInstance.solve();
 

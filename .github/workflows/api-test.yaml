@@ -1,0 +1,71 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  API:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          npm install --prefix backend/multi-container/brute-force
+          npm install --prefix backend/multi-container/three-opt
+          npm install --prefix backend/single-container/dynamic-programming
+          npm install --prefix backend/single-container/cheapest-insertion
+          npm install --prefix backend/single-container/nearest-neighbour
+
+      - name: Run Brute Force API tests
+        run: |
+          node backend/multi-container/brute-force/src/server.js &
+          SERVER_PID=$!
+          node backend/multi-container/brute-force/src/worker.js &
+          WORKER_PID=$!
+          sleep 5
+          npx mocha backend/multi-container/brute-force/test/apiTest.js
+          kill $SERVER_PID $WORKER_PID
+
+      - name: Run Three-Opt API tests
+        run: |
+          node backend/multi-container/three-opt/src/server.js &
+          SERVER_PID=$!
+          node backend/multi-container/three-opt/src/worker.js &
+          WORKER_PID=$!
+          sleep 5
+          npx mocha backend/multi-container/three-opt/test/apiTest.js
+          kill $SERVER_PID $WORKER_PID
+
+      - name: Run Dynamic Programming API tests
+        run: |
+          node backend/single-container/dynamic-programming/src/server.js &
+          SERVER_PID=$!
+          sleep 5
+          npx mocha backend/single-container/dynamic-programming/test/apiTest.js
+          kill $SERVER_PID
+
+      - name: Run Cheapest Insertion API tests
+        run: |
+          node backend/single-container/cheapest-insertion/src/server.js &
+          SERVER_PID=$!
+          sleep 5
+          npx mocha backend/single-container/cheapest-insertion/test/apiTest.js
+          kill $SERVER_PID
+
+      - name: Run Nearest Neighbour API tests
+        run: |
+          node backend/single-container/nearest-neighbour/src/server.js &
+          SERVER_PID=$!
+          sleep 5
+          npx mocha backend/single-container/nearest-neighbour/test/apiTest.js
+          kill $SERVER_PID
