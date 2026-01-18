@@ -10,7 +10,7 @@ const graphFiles = fs
   .readdirSync(graphsDir)
   .filter((file) => file.endsWith(".json"));
 
-const graphs = graphFiles.map((file) => require(path.join(graphsDir, file)));
+let graphs = graphFiles.map((file) => require(path.join(graphsDir, file)));
 
 graphs.sort((a, b) => a.coordinates.length - b.coordinates.length);
 
