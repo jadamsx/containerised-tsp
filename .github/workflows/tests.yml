@@ -2,45 +2,41 @@ name: Integration Tests
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [15.x]
-
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
+      - uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: |
-        npm install --prefix backend/multi-container/brute-force
-        npm install --prefix backend/multi-container/three-opt
-        npm install --prefix backend/single-container/dynamic-programming
-        npm install --prefix backend/single-container/cheapest-insertion
-        npm install --prefix backend/single-container/nearest-neighbour
+      - name: Use Node.js 15
+        uses: actions/setup-node@v3
+        with:
+          node-version: 15
 
-    - name: Run Brute Force integration tests
-      run: cd backend/multi-container/brute-force/test && npx mocha intergrationTest.js
+      - name: Install dependencies
+        run: |
+          npm install --prefix backend/multi-container/brute-force
+          npm install --prefix backend/multi-container/three-opt
+          npm install --prefix backend/single-container/dynamic-programming
+          npm install --prefix backend/single-container/cheapest-insertion
+          npm install --prefix backend/single-container/nearest-neighbour
 
-    - name: Run Three-Opt integration tests
-      run: cd backend/multi-container/three-opt/test && npx mocha intergrationTest.js
+      - name: Run Brute Force integration tests
+        run: cd backend/multi-container/brute-force/test && npx mocha intergrationTest.js
 
-    - name: Run Dynamic Programming integration tests
-      run: cd backend/single-container/dynamic-programming/test && npx mocha intergrationTest.js
+      - name: Run Three-Opt integration tests
+        run: cd backend/multi-container/three-opt/test && npx mocha intergrationTest.js
 
-    - name: Run Cheapest Insertion integration tests
-      run: cd backend/single-container/cheapest-insertion/test && npx mocha intergrationTest.js
+      - name: Run Dynamic Programming integration tests
+        run: cd backend/single-container/dynamic-programming/test && npx mocha intergrationTest.js
 
-    - name: Run Nearest Neighbour integration tests
-      run: cd backend/single-container/nearest-neighbour/test && npx mocha intergrationTest.js
+      - name: Run Cheapest Insertion integration tests
+        run: cd backend/single-container/cheapest-insertion/test && npx mocha intergrationTest.js
+
+      - name: Run Nearest Neighbour integration tests
+        run: cd backend/single-container/nearest-neighbour/test && npx mocha intergrationTest.js
