@@ -17,10 +17,9 @@ const graphs = graphFiles.map((file) => require(path.join(graphsDir, file)));
 
 graphs.sort((a, b) => a.coordinates.length - b.coordinates.length);
 
-function calculateAccuracy(actualCost, calculatedCost) {
-  const difference = calculatedCost - actualCost;
-  const accuracy = ((actualCost - difference) / actualCost) * 100;
-  return accuracy;
+function calculateAccuracy(expectedCost, calculatedCost) {
+  const accuracy = (expectedCost / calculatedCost) * 100;
+  return accuracy.toFixed(2);
 }
 
 describe("Cheapest-Insertion-Service API", () => {
