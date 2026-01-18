@@ -16,10 +16,9 @@ graphs.sort((a, b) => a.coordinates.length - b.coordinates.length);
 
 graphs.splice(-5); // Remove larger graphs that are not feasible to test due to time constraints
 
-function calculateAccuracy(actualCost, calculatedCost) {
-  const difference = calculatedCost - actualCost;
-  const accuracy = ((actualCost - difference) / actualCost) * 100;
-  return accuracy;
+function calculateAccuracy(expectedCost, calculatedCost) {
+  const accuracy = (expectedCost / calculatedCost) * 100;
+  return accuracy.toFixed(2);
 }
 
 describe("Dynamic Programming Algorithm", () => {

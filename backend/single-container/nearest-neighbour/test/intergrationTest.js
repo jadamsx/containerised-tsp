@@ -14,10 +14,10 @@ const graphs = graphFiles.map((file) => require(path.join(graphsDir, file)));
 
 graphs.sort((a, b) => a.coordinates.length - b.coordinates.length);
 
-function calculateAccuracy(actualCost, calculatedCost) {
-  const difference = calculatedCost - actualCost;
+function calculateAccuracy(expectedCost, calculatedCost) {
+  const accuracy = (expectedCost / calculatedCost) * 100;
   const accuracy = ((actualCost - difference) / actualCost) * 100;
-  return accuracy;
+  return accuracy.toFixed(2);
 }
 
 describe("Nearest Neighbor Algorithm", () => {

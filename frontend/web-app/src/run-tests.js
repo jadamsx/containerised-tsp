@@ -69,14 +69,13 @@ async function talkToService(url, graph) {
  * Calculates the accuracy of a calculated cost compared to an expected cost.
  *
  * @param {number} expectedCost - The expected cost of the tour.
- * @param {number} actualCost - The actual cost of the tour.
+ * @param {number} calculatedCost - The calculated cost of the tour.
  * @returns {number} - The accuracy percentage of the calculated cost.
  */
-function calculateAccuracy(actualCost, calculatedCost) {
-  const difference = calculatedCost - actualCost;
-  let accuracy = ((actualCost - difference) / actualCost) * 100;
-  accuracy = accuracy.toFixed(2);
-  return accuracy;
+function calculateAccuracy(expectedCost, calculatedCost) {
+  const accuracy = (expectedCost / calculatedCost) * 100;
+  return accuracy.toFixed(2);
+  return accuracy.toFixed(2);
 }
 
 /**
