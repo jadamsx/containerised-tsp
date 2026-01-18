@@ -1,0 +1,42 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  Integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          npm install --prefix backend/multi-container/brute-force
+          npm install --prefix backend/multi-container/three-opt
+          npm install --prefix backend/single-container/dynamic-programming
+          npm install --prefix backend/single-container/cheapest-insertion
+          npm install --prefix backend/single-container/nearest-neighbour
+
+      - name: Run Brute Force integration tests
+        run: npx mocha backend/multi-container/brute-force/test/intergrationTest.js
+
+      - name: Run Three-Opt integration tests
+        run: npx mocha backend/multi-container/three-opt/test/intergrationTest.js
+
+      - name: Run Dynamic Programming integration tests
+        run: npx mocha backend/single-container/dynamic-programming/test/intergrationTest.js
+
+      - name: Run Cheapest Insertion integration tests
+        run: npx mocha backend/single-container/cheapest-insertion/test/intergrationTest.js
+
+      - name: Run Nearest Neighbour integration tests
+        run: npx mocha backend/single-container/nearest-neighbour/test/intergrationTest.js
