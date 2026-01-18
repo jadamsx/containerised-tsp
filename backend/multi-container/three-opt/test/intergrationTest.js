@@ -6,7 +6,7 @@ const fs = require("fs");
 const { ThreeOptTSP } = require("../src/three-opt");
 
 
-const graphsDir = path.join(__dirname, "../../../shared/graphs");
+const graphsDir = path.join(__dirname, "../../../../shared/graphs");
 const graphFiles = fs
   .readdirSync(graphsDir)
   .filter((file) => file.endsWith(".json"));
@@ -17,12 +17,12 @@ graphs.sort((a, b) => a.coordinates.length - b.coordinates.length);
 
 function calculateAccuracy(expectedCost, calculatedCost) {
   const accuracy = (expectedCost / calculatedCost) * 100;
-  return accuracy.toFixed(2);
+  return accuracy;
 }
 
 describe("ThreeOpt Algorithm", () => {
   for (const graph of graphs) {
-    it(`Returns the most optimal tour and its cost for ${graph.name}!`, (done) => {
+    it(`Returns a reasonably optimal tour and its cost for ${graph.name}!`, (done) => {
       const tspInstance = new ThreeOptTSP(graph);
       const result = tspInstance.solve();
 
