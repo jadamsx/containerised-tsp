@@ -81,15 +81,6 @@ npx mocha apiTest.js
 
 Tests the HTTP API.
 
-## Performance
-
-| Cities | Time | Memory |
-|--------|------|--------|
-| 10 | ~20ms | ~5MB |
-| 12 | ~500ms | ~50MB |
-| 14 | ~5s | ~500MB |
-| 15 | ~15s | ~1GB |
-
 ## Docker
 
 ```bash

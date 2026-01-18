@@ -29,15 +29,15 @@ node src/server.js
 - Master API: `http://localhost:3030`
 - Queue/Worker coordination: `http://localhost:3031`
 
-### Worker Mode (for distributed computation)
+### Worker Mode
 
-Start one or more worker processes pointing to a master:
+Start one or more worker processes pointing to the master queue:
 
 ```bash
-BRUTE_FORCE_MASTER_URL=http://localhost:3031 node src/worker.js
+node src/worker.js
 ```
 
-In Kubernetes/remote deployment, point to your master service:
+This connects to the local master automatically. For remote/Kubernetes deployment, point to your master service:
 
 ```bash
 BRUTE_FORCE_MASTER_URL=http://brute-force-master-service:3031 node src/worker.js

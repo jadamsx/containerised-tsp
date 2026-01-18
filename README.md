@@ -123,7 +123,3 @@ docker run -p 3030:3030 -p 3031:3031 brute-force-service
 - Brute Force tests may take 10-30 seconds for larger graphs due to factorial time complexity
 - Integration tests have 30-second timeouts for computational algorithms
 - For graphs with 11+ cities, consider using heuristic algorithms (Three-Opt, Cheapest Insertion, Nearest Neighbour)
-
-## License
-
-ISC

@@ -81,16 +81,6 @@ npx mocha apiTest.js
 
 Tests the HTTP API.
 
-## Performance
-
-| Cities | Time |
-|--------|------|
-| 50 | ~5ms |
-| 100 | ~20ms |
-| 500 | ~500ms |
-| 1000 | ~2s |
-| 5000 | ~50s |
-
 ## How It Works
 
 ```

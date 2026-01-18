@@ -18,7 +18,7 @@ npm install
 
 ## Running
 
-### Master Mode (local development)
+### Master Mode
 
 Both master and queue servers start automatically:
 
@@ -29,15 +29,15 @@ node src/server.js
 - Master API: `http://localhost:3031`
 - Queue/Worker coordination: `http://localhost:3041`
 
-### Worker Mode (for distributed computation)
+### Worker Mode
 
-Start one or more worker processes pointing to a master:
+Start one or more worker processes pointing to the master queue:
 
 ```bash
-THREE_OPT_MASTER_URL=http://localhost:3041 node src/worker.js
+node src/worker.js
 ```
 
-In remote deployment, point to your master service:
+This connects to the local master automatically. For remote/Kubernetes deployment, point to your master service:
 
 ```bash
 THREE_OPT_MASTER_URL=http://three-opt-master-service:3041 node src/worker.js
@@ -105,16 +105,6 @@ npx mocha apiTest.js
 
 Tests the HTTP API and distributed system.
 
-## Performance
-
-| Cities | Time | Accuracy |
-|--------|------|----------|
-| 8 | ~20ms | 99% |
-| 10 | ~100ms | 98% |
-| 15 | ~500ms | 97% |
-| 20 | ~2s | 97% |
-| 50 | ~50s | 97-99% |
-
 ## Docker
 
 Build and run master:
@@ -124,9 +114,15 @@ docker build -t three-opt-service .
 docker run -p 3031:3031 -p 3041:3041 three-opt-service
 ```
 
-Run worker pointing to local master:
+Run worker pointing to master service:
 
 ```bash
-docker run -e THREE_OPT_MASTER_URL=http://host.docker.internal:3041 three-opt-service node src/worker.js
+docker run three-opt-service node src/worker.js
+```
+
+For remote/Kubernetes deployment, set the master URL:
+
+```bash
+docker run -e THREE_OPT_MASTER_URL=http://three-opt-master-service:3041 three-opt-service node src/worker.js
 ```
 
