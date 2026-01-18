@@ -27,16 +27,16 @@ jobs:
           npm install --prefix backend/single-container/nearest-neighbour
 
       - name: Run Brute Force integration tests
-        run: cd backend/multi-container/brute-force/test && npx mocha intergrationTest.js
+        run: npx mocha backend/multi-container/brute-force/test/intergrationTest.js
 
       - name: Run Three-Opt integration tests
-        run: cd backend/multi-container/three-opt/test && npx mocha intergrationTest.js
+        run: npx mocha backend/multi-container/three-opt/test/intergrationTest.js
 
       - name: Run Dynamic Programming integration tests
-        run: cd backend/single-container/dynamic-programming/test && npx mocha intergrationTest.js
+        run: npx mocha backend/single-container/dynamic-programming/test/intergrationTest.js
 
       - name: Run Cheapest Insertion integration tests
-        run: cd backend/single-container/cheapest-insertion/test && npx mocha intergrationTest.js
+        run: npx mocha backend/single-container/cheapest-insertion/test/intergrationTest.js
 
       - name: Run Nearest Neighbour integration tests
-        run: cd backend/single-container/nearest-neighbour/test && npx mocha intergrationTest.js
+        run: npx mocha backend/single-container/nearest-neighbour/test/intergrationTest.js
