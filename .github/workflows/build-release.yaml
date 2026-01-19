@@ -23,9 +23,9 @@ jobs:
       - name: Set version
         id: version
         run: |
-          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          git fetch --tags
+          VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-
       - name: Build & Push Brute Force
         run: |
           docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/jadamsx/containerised-tsp/brute-force:$VERSION -t ghcr.io/jadamsx/containerised-tsp/brute-force:latest --push backend/multi-container/brute-force
