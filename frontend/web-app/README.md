@@ -1,7 +1,7 @@
 
-# Frontend Web App (React)
+# Frontend Web App
 
-Web interface and test orchestrator for the TSP services, now built with React.
+Web interface and test orchestrator for the TSP services, built with React.
 
 ## Prerequisites
 
@@ -57,8 +57,12 @@ frontend/web-app/
 │   │   └── tspService.js
 │   ├── App.jsx
 │   ├── App.css
-│   └── main.jsx
+│   ├── main.jsx
+│   ├── parse-file.cjs
+│   ├── run-tests.cjs
+│   └── server.cjs
 ├── package.json
+├── Dockerfile
 └── README.md
 ```
 
