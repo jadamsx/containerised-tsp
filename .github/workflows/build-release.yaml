@@ -28,20 +28,24 @@ jobs:
 
       - name: Build & Push Brute Force
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/brute-force:$VERSION -t ghcr.io/${{ github.repository }}/brute-force:latest --push backend/multi-container/brute-force
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/jadamsx/containerised-tsp/brute-force:$VERSION -t ghcr.io/jadamsx/containerised-tsp/brute-force:latest --push backend/multi-container/brute-force
 
       - name: Build & Push Three-Opt
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/three-opt:$VERSION -t ghcr.io/${{ github.repository }}/three-opt:latest --push backend/multi-container/three-opt
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/jadamsx/containerised-tsp/three-opt:$VERSION -t ghcr.io/jadamsx/containerised-tsp/three-opt:latest --push backend/multi-container/three-opt
 
       - name: Build & Push Dynamic Programming
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/dynamic-programming:$VERSION -t ghcr.io/${{ github.repository }}/dynamic-programming:latest --push backend/single-container/dynamic-programming
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/jadamsx/containerised-tsp/dynamic-programming:$VERSION -t ghcr.io/jadamsx/containerised-tsp/dynamic-programming:latest --push backend/single-container/dynamic-programming
 
       - name: Build & Push Cheapest Insertion
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/cheapest-insertion:$VERSION -t ghcr.io/${{ github.repository }}/cheapest-insertion:latest --push backend/single-container/cheapest-insertion
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/jadamsx/containerised-tsp/cheapest-insertion:$VERSION -t ghcr.io/jadamsx/containerised-tsp/cheapest-insertion:latest --push backend/single-container/cheapest-insertion
 
       - name: Build & Push Nearest Neighbour
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/nearest-neighbour:$VERSION -t ghcr.io/${{ github.repository }}/nearest-neighbour:latest --push backend/single-container/nearest-neighbour
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/jadamsx/containerised-tsp/nearest-neighbour:$VERSION -t ghcr.io/jadamsx/containerised-tsp/nearest-neighbour:latest --push backend/single-container/nearest-neighbour
+
+      - name: Build & Push Frontend Web App
+        run: |
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/jadamsx/containerised-tsp/web-app:$VERSION -t ghcr.io/jadamsx/containerised-tsp/web-app:latest --push frontend/web-app
