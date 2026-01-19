@@ -111,8 +111,12 @@ Tests the HTTP API and distributed system.
 Build and run master:
 
 ```bash
-docker build -t brute-force-service .
-docker run -p 3030:3030 -p 3031:3031 brute-force-service
+# Build locally
+docker build -t ghcr.io/jadamsx/containerised-tsp/brute-force:latest .
+# Or pull from registry
+docker pull ghcr.io/jadamsx/containerised-tsp/brute-force:latest
+# Run
+docker run -p 3030:3030 -p 3031:3031 ghcr.io/jadamsx/containerised-tsp/brute-force:latest
 ```
 
 Run worker pointing to local master:

@@ -93,7 +93,11 @@ Tests the HTTP API.
 ## Docker
 
 ```bash
-docker build -t cheapest-insertion-service .
-docker run -p 3010:3010 cheapest-insertion-service
+# Build locally
+docker build -t ghcr.io/jadamsx/containerised-tsp/cheapest-insertion:latest .
+# Or pull from registry
+docker pull ghcr.io/jadamsx/containerised-tsp/cheapest-insertion:latest
+# Run
+docker run -p 3010:3010 ghcr.io/jadamsx/containerised-tsp/cheapest-insertion:latest
 ```
 
