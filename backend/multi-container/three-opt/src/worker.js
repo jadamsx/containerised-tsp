@@ -1,7 +1,7 @@
 const axios = require("axios");
 const { ThreeOptTSP } = require("./three-opt");
 
-const masterUrl = process.env.THREE_OPT_MASTER_URL || "http://localhost:3041";
+const masterUrl = process.env.THREE_OPT_URL || "http://localhost:3041";
 
 /**
  * Worker function to continuously check for tasks, execute them, and submit results.

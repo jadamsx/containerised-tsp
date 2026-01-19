@@ -84,10 +84,14 @@ Repeat the same pattern for other services (brute-force, three-opt, dynamic-prog
 
 ## Environment Variables
 
-Each service supports environment variable configuration for distributed deployment:
+All services and the frontend orchestrator support environment variable configuration for deployment. Set these before running the app or any service:
 
-- `BRUTE_FORCE_MASTER_URL` - Worker endpoint for brute-force master (default: http://localhost:3031)
-- `THREE_OPT_MASTER_URL` - Worker endpoint for three-opt master (default: http://localhost:3041)
+- `BRUTE_FORCE_URL` - Brute-force service endpoint (default: http://localhost:3030)
+- `THREE_OPT_URL` - Three-opt service endpoint (default: http://localhost:3040)
+- `NEAREST_NEIGHBOUR_URL` - Nearest neighbour service endpoint (default: http://localhost:3000/solve)
+- `CHEAPEST_INSERTION_URL` - Cheapest insertion service endpoint (default: http://localhost:3010/solve)
+- `DYNAMIC_PROGRAMMING_URL` - Dynamic programming service endpoint (default: http://localhost:3020/solve)
+
 
 ## Running with Docker
 

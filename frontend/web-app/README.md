@@ -1,6 +1,7 @@
-# Frontend Web App
 
-Web interface and test orchestrator for the TSP services.
+# Frontend Web App (React)
+
+Web interface and test orchestrator for the TSP services, now built with React.
 
 ## Prerequisites
 
@@ -11,77 +12,57 @@ npm install
 ## Running
 
 ```bash
-node src/server.js
+npm start
 ```
 
-Server listens on **Port 3040**.
+The Express server serves both the React frontend and API endpoints. By default, it listens on **Port 3001**.
 
-Access at: `http://localhost:3040`
-
-## Test Orchestrator
-
-Automatically runs and aggregates test results from all TSP algorithms:
-
-```bash
-node src/run-tests.js
-```
-
-Runs all algorithms against test graphs and displays:
-- Pass/fail status
-- Solution accuracy
-- Execution times
-- Error details
+Access at: `http://localhost:3001`
 
 ## Features
 
-- **Web UI** for graph visualization and algorithm selection
-- **Test orchestrator** that runs and aggregates all backend service tests
+- **React Web UI** for graph visualization and algorithm selection
+- **API integration** with backend services for algorithm execution
 - **Accuracy reporting** with per-algorithm thresholds:
-  - Brute Force: 100%
-  - Dynamic Programming: 100%
-  - Three-Opt: 97-100%
-  - Cheapest Insertion: 50-100%
-  - Nearest Neighbour: 50-100%
+	- Brute Force: 100%
+	- Dynamic Programming: 100%
+	- Three-Opt: 97-100%
+	- Cheapest Insertion: 50-100%
+	- Nearest Neighbour: 50-100%
 
-## Testing
+## Backend Requirements
 
-The test orchestrator connects to services on default ports:
-
-| Service | Port |
-|---------|------|
-| Nearest Neighbour | 3000 |
-| Cheapest Insertion | 3010 |
-| Dynamic Programming | 3020 |
-| Brute Force | 3030 |
-| Three-Opt | 3031 |
-
-All backend services must be running for tests to pass. For algorithm-only tests without services, run each service's integration tests directly:
-
-```bash
-cd ../backend/*/test
-npx mocha intergrationTest.js
-```
+- Backend services must expose API endpoints for graph data and algorithm execution
+- All backend services must be running for full functionality
 
 ## Docker
 
 ```bash
-docker build -t tsp-frontend .
-docker run -p 3040:3040 tsp-frontend
+docker build -t tsp-frontend-react .
+docker run -p 3001:3001 tsp-frontend-react
 ```
 
-Requires backend services to be accessible on the network.
+Requires backend services to be accessible on the network and ports to be mapped correctly.
 
 ## Project Layout
 
 ```
 frontend/web-app/
 ├── src/
-│   ├── server.js           # Express server
-│   ├── run-tests.js        # Test orchestrator
-│   ├── parse-file.js       # Graph file parser
-│   └── views/
-│       └── index.ejs       # Web UI
+│   ├── components/
+│   │   ├── AlgorithmForm.jsx
+│   │   ├── ResultsPage.jsx
+│   │   └── TourCanvas.jsx
+│   ├── api/
+│   │   └── tspService.js
+│   ├── App.jsx
+│   ├── App.css
+│   └── main.jsx
 ├── package.json
 └── README.md
 ```
 
+## Notes
+- This React frontend replaces the previous Express/EJS implementation.
+- For development, ensure the backend API endpoints are reachable from the frontend.
+- You may remove optional config files (eslint.config.js, etc.) if not needed, but keep index.html and vite.config.js for Vite/React to work.
