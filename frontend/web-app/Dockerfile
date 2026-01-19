@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:20
 
 WORKDIR /app
 
@@ -7,6 +7,7 @@ COPY src/ .
 
 RUN npm install
 
-EXPOSE 8080
+ENV PORT=3040
+EXPOSE 3040
 
 CMD [ "npm", "start" ]
