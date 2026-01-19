@@ -84,7 +84,11 @@ Tests the HTTP API.
 ## Docker
 
 ```bash
-docker build -t dynamic-programming-service .
-docker run -p 3020:3020 dynamic-programming-service
+# Build locally
+docker build -t ghcr.io/jadamsx/containerised-tsp/dynamic-programming:latest .
+# Or pull from registry
+docker pull ghcr.io/jadamsx/containerised-tsp/dynamic-programming:latest
+# Run
+docker run -p 3020:3020 ghcr.io/jadamsx/containerised-tsp/dynamic-programming:latest
 ```
 

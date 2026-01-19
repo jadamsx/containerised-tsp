@@ -95,8 +95,12 @@ return to start
 ## Docker
 
 ```bash
-docker build -t nearest-neighbour-service .
-docker run -p 3000:3000 nearest-neighbour-service
+# Build locally
+docker build -t ghcr.io/jadamsx/containerised-tsp/nearest-neighbour:latest .
+# Or pull from registry
+docker pull ghcr.io/jadamsx/containerised-tsp/nearest-neighbour:latest
+# Run
+docker run -p 3000:3000 ghcr.io/jadamsx/containerised-tsp/nearest-neighbour:latest
 ```
 
 ## Tips for Better Results
