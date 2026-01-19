@@ -15,9 +15,9 @@ npm install
 npm start
 ```
 
-The Express server serves both the React frontend and API endpoints. By default, it listens on **Port 3040**.
+The Express server serves both the React frontend and API endpoints. By default, it listens on **Port 8080**.
 
-Access at: `http://localhost:3040`
+Access at: `http://localhost:8080`
 
 ## Features
 
@@ -37,9 +37,22 @@ Access at: `http://localhost:3040`
 
 ## Docker
 
+
 ```bash
-docker build -t tsp-frontend-react .
-docker run -p 3040:3040 tsp-frontend-react
+# Build the image (local)
+docker build -t ghcr.io/jadamsx/containerised-tsp/web-app:latest .
+
+# Or pull the latest image from GitHub Container Registry
+docker pull ghcr.io/jadamsx/containerised-tsp/web-app:latest
+
+# Run the container
+docker run -p 8080:8080 ghcr.io/jadamsx/containerised-tsp/web-app:latest
+```
+
+# To use a specific version tag (e.g., v0.0.1):
+```bash
+docker pull ghcr.io/jadamsx/containerised-tsp/web-app:v0.0.1
+docker run -p 8080:8080 ghcr.io/jadamsx/containerised-tsp/web-app:v0.0.1
 ```
 
 Requires backend services to be accessible on the network and ports to be mapped correctly.

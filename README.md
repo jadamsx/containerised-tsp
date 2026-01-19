@@ -96,9 +96,57 @@ All services and the frontend orchestrator support environment variable configur
 ## Running with Docker
 
 Build and run individual services:
+
+### Brute Force
 ```bash
-docker build -t brute-force-service ./backend/multi-container/brute-force
-docker run -p 3030:3030 -p 3031:3031 brute-force-service
+# Build locally
+docker build -t ghcr.io/jadamsx/containerised-tsp/brute-force:latest ./backend/multi-container/brute-force
+# Or pull from registry
+docker pull ghcr.io/jadamsx/containerised-tsp/brute-force:latest
+# Run
+docker run -p 3030:3030 -p 3031:3031 ghcr.io/jadamsx/containerised-tsp/brute-force:latest
+```
+
+### Three-Opt
+```bash
+docker build -t ghcr.io/jadamsx/containerised-tsp/three-opt:latest ./backend/multi-container/three-opt
+docker pull ghcr.io/jadamsx/containerised-tsp/three-opt:latest
+docker run -p 3040:3040 -p 3041:3041 ghcr.io/jadamsx/containerised-tsp/three-opt:latest
+```
+
+### Dynamic Programming
+```bash
+docker build -t ghcr.io/jadamsx/containerised-tsp/dynamic-programming:latest ./backend/single-container/dynamic-programming
+docker pull ghcr.io/jadamsx/containerised-tsp/dynamic-programming:latest
+docker run -p 3020:3020 ghcr.io/jadamsx/containerised-tsp/dynamic-programming:latest
+```
+
+### Cheapest Insertion
+```bash
+docker build -t ghcr.io/jadamsx/containerised-tsp/cheapest-insertion:latest ./backend/single-container/cheapest-insertion
+docker pull ghcr.io/jadamsx/containerised-tsp/cheapest-insertion:latest
+docker run -p 3010:3010 ghcr.io/jadamsx/containerised-tsp/cheapest-insertion:latest
+```
+
+### Nearest Neighbour
+```bash
+docker build -t ghcr.io/jadamsx/containerised-tsp/nearest-neighbour:latest ./backend/single-container/nearest-neighbour
+docker pull ghcr.io/jadamsx/containerised-tsp/nearest-neighbour:latest
+docker run -p 3000:3000 ghcr.io/jadamsx/containerised-tsp/nearest-neighbour:latest
+```
+
+### Web App (Frontend)
+```bash
+docker build -t ghcr.io/jadamsx/containerised-tsp/web-app:latest ./frontend/web-app
+docker pull ghcr.io/jadamsx/containerised-tsp/web-app:latest
+docker run -p 8080:8080 ghcr.io/jadamsx/containerised-tsp/web-app:latest
+```
+
+# To use a specific version tag (e.g., v0.0.1):
+```bash
+docker pull ghcr.io/jadamsx/containerised-tsp/brute-force:v0.0.1
+docker run -p 3030:3030 -p 3031:3031 ghcr.io/jadamsx/containerised-tsp/brute-force:v0.0.1
+# ...repeat for other services as needed
 ```
 
 
