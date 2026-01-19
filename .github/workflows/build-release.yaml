@@ -28,25 +28,20 @@ jobs:
 
       - name: Build & Push Brute Force
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/brute-force:$VERSION backend/multi-container/brute-force
-          docker push ghcr.io/${{ github.repository }}/brute-force:$VERSION
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/brute-force:$VERSION -t ghcr.io/${{ github.repository }}/brute-force:latest --push backend/multi-container/brute-force
 
       - name: Build & Push Three-Opt
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/three-opt:$VERSION backend/multi-container/three-opt
-          docker push ghcr.io/${{ github.repository }}/three-opt:$VERSION
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/three-opt:$VERSION -t ghcr.io/${{ github.repository }}/three-opt:latest --push backend/multi-container/three-opt
 
       - name: Build & Push Dynamic Programming
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/dynamic-programming:$VERSION backend/single-container/dynamic-programming
-          docker push ghcr.io/${{ github.repository }}/dynamic-programming:$VERSION
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/dynamic-programming:$VERSION -t ghcr.io/${{ github.repository }}/dynamic-programming:latest --push backend/single-container/dynamic-programming
 
       - name: Build & Push Cheapest Insertion
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/cheapest-insertion:$VERSION backend/single-container/cheapest-insertion
-          docker push ghcr.io/${{ github.repository }}/cheapest-insertion:$VERSION
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/cheapest-insertion:$VERSION -t ghcr.io/${{ github.repository }}/cheapest-insertion:latest --push backend/single-container/cheapest-insertion
 
       - name: Build & Push Nearest Neighbour
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/nearest-neighbour:$VERSION backend/single-container/nearest-neighbour
-          docker push ghcr.io/${{ github.repository }}/nearest-neighbour:$VERSION
+          docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/nearest-neighbour:$VERSION -t ghcr.io/${{ github.repository }}/nearest-neighbour:latest --push backend/single-container/nearest-neighbour
