@@ -64,6 +64,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../../web-app/dist/index.html"));
 });
 
-app.listen(8080, () => {
-  console.log("Server running on http://localhost:8080");
+const PORT = process.env.PORT || 3040;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });

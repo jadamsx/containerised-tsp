@@ -15,9 +15,9 @@ npm install
 npm start
 ```
 
-The Express server serves both the React frontend and API endpoints. By default, it listens on **Port 3001**.
+The Express server serves both the React frontend and API endpoints. By default, it listens on **Port 3040**.
 
-Access at: `http://localhost:3001`
+Access at: `http://localhost:3040`
 
 ## Features
 
@@ -39,7 +39,7 @@ Access at: `http://localhost:3001`
 
 ```bash
 docker build -t tsp-frontend-react .
-docker run -p 3001:3001 tsp-frontend-react
+docker run -p 3040:3040 tsp-frontend-react
 ```
 
 Requires backend services to be accessible on the network and ports to be mapped correctly.
