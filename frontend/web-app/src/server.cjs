@@ -9,7 +9,7 @@ const app = express();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-const sharedGraphsDir = path.join(__dirname, "../../../shared/graphs");
+const sharedGraphsDir = path.join(__dirname, "../graphs");
 let resultData = null;
 
 app.use(express.json());
