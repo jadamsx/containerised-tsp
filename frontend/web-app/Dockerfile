@@ -1,11 +1,11 @@
 FROM node:20
 
-WORKDIR /app
+WORKDIR /web-app
 
-COPY package*.json ./
-COPY src/ ./src/
+COPY . .
 
 RUN npm install
+RUN npm run build
 
 ENV PORT=8080
 EXPOSE 8080
