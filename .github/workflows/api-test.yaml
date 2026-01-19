@@ -1,4 +1,4 @@
-name: Tests
+name: API Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  API:
+  api-test:
     runs-on: ubuntu-latest
 
     steps:
