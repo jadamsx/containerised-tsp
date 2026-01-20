@@ -1,5 +1,5 @@
 module "brute_force" {
-  source = "../../modules/backend/master-worker"
+  source = "../../modules/backend/multi-container"
 
   name      = "brute-force"
   namespace = var.namespace
@@ -17,7 +17,7 @@ module "brute_force" {
 }
 
 module "three_opt" {
-  source = "../../modules/backend/master-worker"
+  source = "../../modules/backend/multi-container"
 
   name      = "three-opt"
   namespace = var.namespace

@@ -1,48 +1,59 @@
 variable "name" {
-  type = string
+  description = "Name of the backend application / Kubernetes Deployment."
+  type        = string
 }
 
 variable "namespace" {
-  type = string
+  description = "Kubernetes namespace in which to deploy the backend resources."
+  type        = string
 }
 
 variable "image" {
-  type = string
+  description = "Container image (including tag) to run for the backend service."
+  type        = string
 }
 
 variable "labels" {
-  type = map(string)
+  description = "Additional labels to apply to Kubernetes resources created by this module."
+  type        = map(string)
 }
 
 variable "container_port" {
-  type = number
+  description = "Port number exposed by the application container."
+  type        = number
 }
 
 variable "service_port" {
-  type = number
+  description = "Port number exposed by the Kubernetes Service to clients."
+  type        = number
 }
 
 variable "service_type" {
-  type    = string
-  default = "ClusterIP"
+  description = "Kubernetes Service type (e.g., ClusterIP, NodePort, LoadBalancer)."
+  type        = string
+  default     = "ClusterIP"
 }
 
 variable "port_name" {
-  type    = string
-  default = "http"
+  description = "Name assigned to the service port (used in Kubernetes Service and container ports)."
+  type        = string
+  default     = "http"
 }
 
 variable "replicas" {
-  type    = number
-  default = 1
+  description = "Number of pod replicas to run for the backend Deployment."
+  type        = number
+  default     = 1
 }
 
 variable "cpu_limit" {
-  type    = string
-  default = "1"
+  description = "CPU limit for the backend container (Kubernetes quantity, e.g., '500m' or '1')."
+  type        = string
+  default     = "1"
 }
 
 variable "memory_limit" {
-  type    = string
-  default = "512Mi"
+  description = "Memory limit for the backend container (Kubernetes quantity, e.g., '256Mi' or '512Mi')."
+  type        = string
+  default     = "512Mi"
 }
