@@ -91,6 +91,8 @@ All services and the frontend orchestrator support environment variable configur
 - `NEAREST_NEIGHBOUR_URL` - Nearest neighbour service endpoint (default: http://localhost:3000/solve)
 - `CHEAPEST_INSERTION_URL` - Cheapest insertion service endpoint (default: http://localhost:3010/solve)
 - `DYNAMIC_PROGRAMMING_URL` - Dynamic programming service endpoint (default: http://localhost:3020/solve)
+- `PORT` - Port a service or the frontend listens on (defaults: 3000, 3010, 3020, 3030, 3040 and 8080 for the frontend)
+- `QUEUE_PORT` - Port the brute-force and three-opt masters serve workers on (defaults: 3031, 3041)
 
 
 ## Running with Docker

@@ -77,6 +77,8 @@ Poll for the solution (returns `null` until complete).
 
 ## Environment Variables
 
+- `PORT` - Master API port (default: `3030`)
+- `QUEUE_PORT` - Master queue port workers connect to (default: `3031`)
 - `BRUTE_FORCE_MASTER_URL` - Master queue endpoint for workers (default: `http://localhost:3031`)
 
 ## Testing

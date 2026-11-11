@@ -1,4 +1,3 @@
-const ip = require("ip");
 const express = require("express");
 const path = require("path");
 const { performance } = require("perf_hooks");
@@ -6,8 +5,8 @@ const { BruteForceTSP } = require("./brute-force");
 
 const app = express();
 const queueApp = express();
-const ipAddress = ip.address();
-const ipPort = 3030;
+const port = process.env.PORT || 3030;
+const queuePort = process.env.QUEUE_PORT || 3031;
 
 let result = null;
 let taskQueue = [];
@@ -207,11 +206,9 @@ function getTimeout(collectionTime) {
   return timeDifferenceInMinutes > timeoutValue;
 }
 
-app.listen(
-  ipPort,
-  console.log(`Master listening to ${ipAddress}:${ipPort} !!!`)
-);
-queueApp.listen(
-  ipPort + 1,
-  console.log(`Master listening to ${ipAddress}:${ipPort + 1} !!!`)
-);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Master listening on 0.0.0.0:${port}`);
+});
+queueApp.listen(queuePort, "0.0.0.0", () => {
+  console.log(`Master queue listening on 0.0.0.0:${queuePort}`);
+});

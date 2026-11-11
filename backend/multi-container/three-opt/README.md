@@ -77,6 +77,8 @@ Poll for the optimized solution (returns `null` until complete).
 
 ## Environment Variables
 
+- `PORT` - Master API port (default: `3040`)
+- `QUEUE_PORT` - Master queue port workers connect to (default: `3041`)
 - `THREE_OPT_MASTER_URL` - Master queue endpoint for workers (default: `http://localhost:3041`)
 
 ## Testing

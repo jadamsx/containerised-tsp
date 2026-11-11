@@ -1,12 +1,10 @@
 const express = require("express");
-const ip = require("ip");
 const path = require("path");
 const { performance } = require("perf_hooks");
 const { NearestNeighborTSP } = require("./nearest-neighbour");
 
 const app = express();
-const ipAddress = ip.address();
-const ipPort = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -44,4 +42,6 @@ app.post("/solve", (req, res) => {
   solveTSP();
 });
 
-app.listen(ipPort, console.log(`Listening to ${ipAddress}:${ipPort} !!!`));
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Listening on 0.0.0.0:${port}`);
+});

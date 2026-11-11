@@ -1,12 +1,10 @@
 const express = require("express");
-const ip = require("ip");
 const path = require("path");
 const { performance } = require("perf_hooks");
 const { CheapestInsertionTSP } = require("./cheapest-insertion");
 
 const app = express();
-const ipAddress = ip.address();
-const ipPort = 3010;
+const port = process.env.PORT || 3010;
 
 app.use(express.json());
 
@@ -48,4 +46,6 @@ app.post("/solve", (req, res) => {
   solveTSP();
 });
 
-app.listen(ipPort, console.log(`Listening to ${ipAddress}:${ipPort} !!!`));
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Listening on 0.0.0.0:${port}`);
+});
