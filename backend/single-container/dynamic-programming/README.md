@@ -40,18 +40,13 @@ Submit a graph to solve.
 }
 ```
 
-Response: `{"message": "Request received and processing started."}`
-
-### GET /result
-
-Poll for the solution (returns `null` until complete).
+Response: the tour, its cost and the time taken in milliseconds. The service answers once the tour is found.
 
 ```json
 {
-  "result": {
-    "Cost": 4.0,
-    "Tour": [0, 1, 3, 2]
-  }
+  "Tour": [0, 1, 3, 2],
+  "Cost": 4.0,
+  "Time": 1.2
 }
 ```
 

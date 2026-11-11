@@ -59,11 +59,11 @@ Submit a graph to solve.
 }
 ```
 
-Response: `{"message": "Request received and processing started."}`
+Response: `{"message": "Request received and processing started.", "id": "k3x9a2b7q"}`. Pass the id to `GET /result`.
 
 ### GET /result
 
-Poll for the solution (returns `null` until complete).
+Poll for the solution with `GET /result?id=<id>` (`result` is `null` until complete, 404 for an unknown id).
 
 ```json
 {
@@ -78,6 +78,8 @@ Poll for the solution (returns `null` until complete).
 ## Environment Variables
 
 - `PORT` - Master API port (default: `3030`)
+- `TASK_TIMEOUT_MS` - Time before an unfinished task goes to another worker (default: `300000`)
+- `WORKER_TIMEOUT_MS` - Time without a poll before a worker stops counting as connected (default: `30000`)
 - `QUEUE_PORT` - Master queue port workers connect to (default: `3031`)
 - `BRUTE_FORCE_MASTER_URL` - Master queue endpoint for workers (default: `http://localhost:3031`)
 
@@ -124,6 +126,6 @@ docker run -p 3030:3030 -p 3031:3031 ghcr.io/jadamsx/containerised-tsp/brute-for
 Run worker pointing to local master:
 
 ```bash
-docker run -e BRUTE_FORCE_MASTER_URL=http://host.docker.internal:3031 brute-force-service node src/worker.js
+docker run -e NODE_ENV=worker -e BRUTE_FORCE_MASTER_URL=http://host.docker.internal:3031 ghcr.io/jadamsx/containerised-tsp/brute-force:latest
 ```
 

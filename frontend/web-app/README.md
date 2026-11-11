@@ -23,12 +23,7 @@ Access at: `http://localhost:8080`
 
 - **React Web UI** for graph visualization and algorithm selection
 - **API integration** with backend services for algorithm execution
-- **Accuracy reporting** with per-algorithm thresholds:
-	- Brute Force: 100%
-	- Dynamic Programming: 100%
-	- Three-Opt: 97-100%
-	- Cheapest Insertion: 50-100%
-	- Nearest Neighbour: 50-100%
+- **Accuracy reporting** as the expected cost of the graph divided by the cost found
 
 ## Backend Requirements
 
