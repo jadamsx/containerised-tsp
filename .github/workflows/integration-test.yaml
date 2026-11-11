@@ -11,10 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Use Node.js 18
+      - name: Use Node.js 22
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install dependencies
         run: |
@@ -25,16 +25,16 @@ jobs:
           npm install --prefix backend/single-container/nearest-neighbour
 
       - name: Run Brute Force integration tests
-        run: npx mocha backend/multi-container/brute-force/test/intergrationTest.js
+        run: npx mocha backend/multi-container/brute-force/test/integrationTest.js
 
       - name: Run Three-Opt integration tests
-        run: npx mocha backend/multi-container/three-opt/test/intergrationTest.js
+        run: npx mocha backend/multi-container/three-opt/test/integrationTest.js
 
       - name: Run Dynamic Programming integration tests
-        run: npx mocha backend/single-container/dynamic-programming/test/intergrationTest.js
+        run: npx mocha backend/single-container/dynamic-programming/test/integrationTest.js
 
       - name: Run Cheapest Insertion integration tests
-        run: npx mocha backend/single-container/cheapest-insertion/test/intergrationTest.js
+        run: npx mocha backend/single-container/cheapest-insertion/test/integrationTest.js
 
       - name: Run Nearest Neighbour integration tests
-        run: npx mocha backend/single-container/nearest-neighbour/test/intergrationTest.js
+        run: npx mocha backend/single-container/nearest-neighbour/test/integrationTest.js

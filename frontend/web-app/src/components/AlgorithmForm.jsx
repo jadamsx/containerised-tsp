@@ -46,7 +46,7 @@ function AlgorithmForm() {
     try {
       await axios.post("/test", formData);
       navigate("/results");
-    } catch (err) {
+    } catch {
       alert("Error submitting test");
     } finally {
       setLoading(false);

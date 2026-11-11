@@ -4,19 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/integrationTest.js",
+    "test:integration": "mocha test/integrationTest.js",
+    "test:api": "mocha test/apiTest.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.1584.0",
     "axios": "^1.6.5",
     "ejs": "^3.1.9",
     "express": "^4.19.1",
     "ip": "^1.1.9",
-    "math": "^0.0.3",
-    "path": "^0.12.7",
     "sockjs": "^0.3.24",
     "ws": "^8.16.0"
   },
