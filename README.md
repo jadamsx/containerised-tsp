@@ -10,75 +10,21 @@ Part two is the services. Each algorithm gets a small Express service and a Dock
 
 ## Architecture
 
-The web app is the only entry point. It calls the three single-container services directly. For brute force and three-opt it calls a master, which splits the graph into tasks. Workers poll the master's queue port for tasks and return their results.
+Single-container services solve the whole graph in one container. Brute force and three-opt use a master that splits the graph into tasks for any number of workers.
 
 ```mermaid
 flowchart LR
-  browser["Browser"]:::external
-
-  subgraph orchestrator["Orchestrator"]
-    web["web-app :8080"]
+  subgraph multi["Multi-container"]
+    B["web-app"] -->|"POST /solve"| M["master"]
+    M ==>|"tasks"| W1["worker"]:::new
+    M ==>|"tasks"| W2["worker"]:::new
+    M ==>|"tasks"| W3["worker"]:::new
   end
-
-  subgraph single["Single-container services"]
-    nn["nearest-neighbour :3000"]
-    ci["cheapest-insertion :3010"]
-    dp["dynamic-programming :3020"]
+  subgraph single["Single container"]
+    A["web-app"] -->|"POST /solve"| S["algorithm service"]
   end
-
-  subgraph bf["Brute force"]
-    bfm["master :3030"]
-    bfq[("task queue :3031")]:::store
-    bfw["workers"]
-  end
-
-  subgraph to["Three-opt"]
-    tom["master :3040"]
-    toq[("task queue :3041")]:::store
-    tow["workers"]
-  end
-
-  browser -->|"POST /test, GET /result"| web
-  web -->|"POST /solve"| nn
-  web -->|"POST /solve"| ci
-  web -->|"POST /solve"| dp
-  web -->|"POST /solve, GET /result"| bfm
-  web -->|"POST /solve, GET /result"| tom
-  bfm --- bfq
-  tom --- toq
-  bfw -->|"GET /getTask, POST /returnTask"| bfq
-  tow -->|"GET /getTask, POST /returnTask"| toq
-
-  classDef store    fill:#fef3c7,stroke:#d97706,color:#78350f
-  classDef external fill:#ede9fe,stroke:#7c3aed,color:#4c1d95
-```
-
-A multi-container run looks like this. If a worker does not return a task within `TASK_TIMEOUT_MS` (five minutes by default), the master gives the task to the next worker that asks.
-
-```mermaid
-sequenceDiagram
-  autonumber
-  participant W as web-app
-  participant M as master
-  participant A as worker A
-  participant B as worker B
-
-  W->>M: POST /solve with the graph
-  M-->>W: run id
-  Note over M: split the graph into tasks
-  A->>M: GET /getTask
-  M-->>A: task 0
-  B->>M: GET /getTask
-  M-->>B: task 1
-  B->>M: POST /returnTask with result for task 1
-  Note over A: worker A stops, task 0 is not returned
-  Note over M: task 0 times out after TASK_TIMEOUT_MS
-  B->>M: GET /getTask
-  M-->>B: task 0 again
-  B->>M: POST /returnTask with result for task 0
-  Note over M: all tasks done, pick the shortest tour
-  W->>M: GET /result?id=run id
-  M-->>W: tour, cost and time
+  style multi fill:none,stroke:#7c3aed,stroke-width:2px,color:#7c3aed
+  classDef new fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
 ```
 
 ## Algorithms
