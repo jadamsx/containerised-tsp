@@ -114,14 +114,12 @@ Tests the HTTP API and distributed system.
 Build and run master:
 
 ```bash
-```bash
 # Build locally
 docker build -t ghcr.io/jadamsx/containerised-tsp/three-opt:latest .
 # Or pull from registry
 docker pull ghcr.io/jadamsx/containerised-tsp/three-opt:latest
 # Run
 docker run -p 3040:3040 -p 3041:3041 ghcr.io/jadamsx/containerised-tsp/three-opt:latest
-```
 ```
 
 Run worker pointing to master service:
