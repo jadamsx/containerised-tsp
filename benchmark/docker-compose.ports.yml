@@ -1,0 +1,12 @@
+services:
+  nearest-neighbour:
+    ports:
+      - "3000:3000"
+
+  cheapest-insertion:
+    ports:
+      - "3010:3010"
+
+  dynamic-programming:
+    ports:
+      - "3020:3020"
