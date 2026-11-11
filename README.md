@@ -35,7 +35,7 @@ containerised-tsp/
 ## Quick Start
 
 ### Prerequisites
-- Node.js (v15) and npm
+- Node.js (v22) and npm
 - Docker (for containerized deployment)
 - Kubernetes cluster (for distributed deployment)
 
