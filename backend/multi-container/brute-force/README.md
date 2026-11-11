@@ -75,13 +75,19 @@ Poll for the solution with `GET /result?id=<id>` (`result` is `null` until compl
 }
 ```
 
+### GET /health
+
+Returns `{"status": "ok", "workers": <n>}`, where `workers` is the number of connected workers.
+
 ## Environment Variables
 
 - `PORT` - Master API port (default: `3030`)
 - `TASK_TIMEOUT_MS` - Time before an unfinished task goes to another worker (default: `300000`)
 - `WORKER_TIMEOUT_MS` - Time without a poll before a worker stops counting as connected (default: `30000`)
+- `RUN_TTL_MS` - Age after which a run is dropped, finished or not (default: `3600000`)
 - `QUEUE_PORT` - Master queue port workers connect to (default: `3031`)
 - `BRUTE_FORCE_MASTER_URL` - Master queue endpoint for workers (default: `http://localhost:3031`)
+- `RETRY_MIN_MS` / `RETRY_MAX_MS` - Worker backoff bounds while the master is unreachable (default: `1000` / `30000`)
 
 ## Testing
 

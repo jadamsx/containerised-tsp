@@ -19,6 +19,15 @@ The Express server serves both the React frontend and API endpoints. By default,
 
 Access at: `http://localhost:8080`
 
+## Environment Variables
+
+- `PORT` - Port the server listens on (default: `8080`)
+- `NEAREST_NEIGHBOUR_URL` - Nearest-neighbour service (default: `http://localhost:3000/solve`)
+- `CHEAPEST_INSERTION_URL` - Cheapest-insertion service (default: `http://localhost:3010/solve`)
+- `DYNAMIC_PROGRAMMING_URL` - Dynamic-programming service (default: `http://localhost:3020/solve`)
+- `BRUTE_FORCE_URL` - Brute-force master (default: `http://localhost:3030`)
+- `THREE_OPT_URL` - Three-opt master (default: `http://localhost:3040`)
+
 ## Features
 
 - **React Web UI** for graph visualization and algorithm selection
@@ -44,7 +53,6 @@ docker pull ghcr.io/jadamsx/containerised-tsp/web-app:latest
 docker run -p 8080:8080 ghcr.io/jadamsx/containerised-tsp/web-app:latest
 ```
 
-# To use a specific version tag (e.g., v0.0.1):
 ```bash
 docker pull ghcr.io/jadamsx/containerised-tsp/web-app:v0.0.1
 docker run -p 8080:8080 ghcr.io/jadamsx/containerised-tsp/web-app:v0.0.1
@@ -77,4 +85,3 @@ frontend/web-app/
 ## Notes
 - This React frontend replaces the previous Express/EJS implementation.
 - For development, ensure the backend API endpoints are reachable from the frontend.
-- You may remove optional config files (eslint.config.js, etc.) if not needed, but keep index.html and vite.config.js for Vite/React to work.

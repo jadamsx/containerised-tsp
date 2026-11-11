@@ -1,3 +1,5 @@
+const MAX_CITIES = 20;
+
 /**
  * DynamicProgrammingTSP class represents a solution to the Traveling Salesman Problem (TSP)
  * using the Dynamic Programming algorithm.
@@ -52,9 +54,13 @@ class DynamicProgrammingTSP {
    * Subsets of the cities 1..n-1 are bitmasks, and cost[subset][j] is the shortest
    * path from city 0 through every city in the subset that ends at city j.
    * @returns {Object} - An object containing the shortest tour and the total distance of the tour.
+   * @throws {Error} - If the graph has more than MAX_CITIES cities.
    */
   solve() {
     const n = this.numCities;
+    if (n > MAX_CITIES) {
+      throw new Error(`Dynamic programming supports at most ${MAX_CITIES} cities.`);
+    }
     if (n < 2) {
       return { tour: [0, 0], totalDistance: 0 };
     }
@@ -112,7 +118,7 @@ class DynamicProgrammingTSP {
   }
 }
 
-module.exports = { DynamicProgrammingTSP };
+module.exports = { DynamicProgrammingTSP, MAX_CITIES };
 
 // Example Usage:
 // const data = {

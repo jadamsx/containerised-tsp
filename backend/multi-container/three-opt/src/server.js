@@ -10,6 +10,7 @@ const queuePort = process.env.QUEUE_PORT || 3041;
 const taskTimeout = Number(process.env.TASK_TIMEOUT_MS) || 5 * 60 * 1000;
 
 const workerTimeout = Number(process.env.WORKER_TIMEOUT_MS) || 30 * 1000;
+const runTtl = Number(process.env.RUN_TTL_MS) || 60 * 60 * 1000;
 
 const runs = new Map();
 const workers = new Map();
@@ -52,6 +53,7 @@ app.post("/solve", (req, res) => {
   const id = Math.random().toString(36).substr(2, 9);
   const run = {
     id,
+    createdAt: Date.now(),
     startTime: performance.now(),
     tasks: [],
     resultQueue: [],
@@ -274,6 +276,17 @@ function countWorkers() {
 }
 
 /**
+ * Drops runs that are older than the run TTL, finished or not.
+ */
+function evictExpiredRuns() {
+  for (const run of runs.values()) {
+    if (Date.now() - run.createdAt > runTtl) {
+      runs.delete(run.id);
+    }
+  }
+}
+
+/**
  * Calculates if a task has timed out.
  * @param {number} collectionTime - The time the task was collected.
  * @returns {boolean} Whether the task has timed out.
@@ -281,6 +294,8 @@ function countWorkers() {
 function getTimeout(collectionTime) {
   return Date.now() - collectionTime > taskTimeout;
 }
+
+setInterval(evictExpiredRuns, Math.min(runTtl, 60 * 1000)).unref();
 
 if (require.main === module) {
   app.listen(port, "0.0.0.0", () => {
