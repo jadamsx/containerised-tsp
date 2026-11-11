@@ -11,6 +11,7 @@ const { ThreeOptTSP } = require("../src/three-opt");
 
 process.env.TASK_TIMEOUT_MS = "100";
 process.env.WORKER_TIMEOUT_MS = "100";
+process.env.RUN_TTL_MS = "500";
 const { app, queueApp } = require("../src/server");
 
 chai.use(chaiHttp);
@@ -133,6 +134,14 @@ describe("Master", () => {
     await new Promise((resolve) => setTimeout(resolve, 150));
     res = await chai.request(app).get("/health");
     expect(res.body.workers).to.equal(0);
+  });
+
+  it("drops a run once it is older than the TTL", async function() {
+    this.timeout(5000);
+    const id = await startRun(graphs[0]);
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    const res = await chai.request(app).get(`/result?id=${id}`);
+    expect(res).to.have.status(404);
   });
 
   it("rejects results for an unknown run", async function() {
