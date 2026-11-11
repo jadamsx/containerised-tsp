@@ -1,0 +1,34 @@
+name: Helm on k3d
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  helm-k3d:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Lint chart
+        run: helm lint deploy/helm/tsp
+
+      - name: Install k3d
+        run: curl -fsSL https://raw.githubusercontent.com/k3d-io/k3d/v5.8.3/install.sh | TAG=v5.8.3 bash
+
+      - name: Deploy to k3d
+        run: scripts/k3d-up.sh
+
+      - name: Wait for rollout
+        run: |
+          for deployment in $(kubectl --context k3d-tsp get deployments -o name); do
+            kubectl --context k3d-tsp rollout status "$deployment" --timeout=120s
+          done
+
+      - name: Solve through the web app
+        run: scripts/k3d-smoke.sh
+
+      - name: Show pods on failure
+        if: failure()
+        run: kubectl --context k3d-tsp get pods
