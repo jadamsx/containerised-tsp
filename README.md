@@ -54,7 +54,7 @@ npm install --prefix frontend/web-app
 **Run tests:** Each service includes integration tests (algorithm-only) and API tests (full service):
 ```bash
 # Integration test (no service required)
-cd backend/single-container/nearest-neighbour/test && npx mocha intergrationTest.js
+cd backend/single-container/nearest-neighbour/test && npx mocha integrationTest.js
 
 # API test (requires service running)
 node backend/single-container/nearest-neighbour/src/server.js  # Terminal 1

@@ -61,7 +61,7 @@ Poll for the solution (returns `null` until complete).
 
 ```bash
 cd test
-npx mocha intergrationTest.js
+npx mocha integrationTest.js
 ```
 
 Tests the algorithm directly without requiring the service.
