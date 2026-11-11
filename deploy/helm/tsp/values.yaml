@@ -1,0 +1,35 @@
+image:
+  repository: ghcr.io/jadamsx/containerised-tsp
+  tag: ""
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 96Mi
+
+singles:
+  nearest-neighbour:
+    port: 3000
+  cheapest-insertion:
+    port: 3010
+  dynamic-programming:
+    port: 3020
+
+masters:
+  brute-force:
+    port: 3030
+    queuePort: 3031
+    workers: 2
+  three-opt:
+    port: 3040
+    queuePort: 3041
+    workers: 2
+
+webApp:
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  host: tsp.local
