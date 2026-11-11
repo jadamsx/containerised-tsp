@@ -177,6 +177,10 @@ function solve(graph, run) {
     console.log("Number of Tasks Created: ", tasks.length);
 
     addTasksToRun(tasks, run);
+
+    if (tasks.length === 0) {
+      completeRun(run);
+    }
   } catch (error) {
     console.error("Error sending tasks to queue:", error);
     runs.delete(run.id);
