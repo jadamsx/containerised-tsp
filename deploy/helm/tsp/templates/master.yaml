@@ -14,6 +14,8 @@ spec:
       labels:
         app: {{ $.Release.Name }}-{{ $name }}-master
     spec:
+      securityContext:
+        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
       containers:
         - name: master
           image: {{ include "tsp.image" (dict "root" $ "name" $name) }}
@@ -32,6 +34,8 @@ spec:
               path: /health
               port: api
             initialDelaySeconds: 10
+          securityContext:
+            {{- toYaml $.Values.securityContext | nindent 12 }}
           resources:
             {{- toYaml $.Values.resources | nindent 12 }}
 ---
@@ -62,6 +66,8 @@ spec:
       labels:
         app: {{ $.Release.Name }}-{{ $name }}-worker
     spec:
+      securityContext:
+        {{- toYaml $.Values.podSecurityContext | nindent 8 }}
       containers:
         - name: worker
           image: {{ include "tsp.image" (dict "root" $ "name" $name) }}
@@ -71,6 +77,8 @@ spec:
               value: worker
             - name: {{ $name | upper | replace "-" "_" }}_MASTER_URL
               value: http://{{ $.Release.Name }}-{{ $name }}-master:{{ $svc.queuePort }}
+          securityContext:
+            {{- toYaml $.Values.securityContext | nindent 12 }}
           resources:
             {{- toYaml $.Values.resources | nindent 12 }}
 {{- end }}
