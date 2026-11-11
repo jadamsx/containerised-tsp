@@ -1,0 +1,83 @@
+x-healthcheck: &healthcheck
+  interval: 5s
+  timeout: 3s
+  retries: 10
+  start_period: 5s
+
+services:
+  nearest-neighbour:
+    build: ./backend/single-container/nearest-neighbour
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/health"]
+
+  cheapest-insertion:
+    build: ./backend/single-container/cheapest-insertion
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3010/health"]
+
+  dynamic-programming:
+    build: ./backend/single-container/dynamic-programming
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3020/health"]
+
+  brute-force-master:
+    build: ./backend/multi-container/brute-force
+    ports:
+      - "3030:3030"
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3030/health"]
+
+  brute-force-worker:
+    build: ./backend/multi-container/brute-force
+    environment:
+      NODE_ENV: worker
+      BRUTE_FORCE_MASTER_URL: http://brute-force-master:3031
+    depends_on:
+      brute-force-master:
+        condition: service_healthy
+
+  three-opt-master:
+    build: ./backend/multi-container/three-opt
+    ports:
+      - "3040:3040"
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3040/health"]
+
+  three-opt-worker:
+    build: ./backend/multi-container/three-opt
+    environment:
+      NODE_ENV: worker
+      THREE_OPT_MASTER_URL: http://three-opt-master:3041
+    depends_on:
+      three-opt-master:
+        condition: service_healthy
+
+  web-app:
+    build: ./frontend/web-app
+    ports:
+      - "${WEB_PORT:-8080}:8080"
+    environment:
+      NEAREST_NEIGHBOUR_URL: http://nearest-neighbour:3000/solve
+      CHEAPEST_INSERTION_URL: http://cheapest-insertion:3010/solve
+      DYNAMIC_PROGRAMMING_URL: http://dynamic-programming:3020/solve
+      BRUTE_FORCE_URL: http://brute-force-master:3030
+      THREE_OPT_URL: http://three-opt-master:3040
+    depends_on:
+      nearest-neighbour:
+        condition: service_healthy
+      cheapest-insertion:
+        condition: service_healthy
+      dynamic-programming:
+        condition: service_healthy
+      brute-force-master:
+        condition: service_healthy
+      three-opt-master:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
