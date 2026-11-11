@@ -14,17 +14,19 @@ Single-container services solve the whole graph in one container. Brute force an
 
 ```mermaid
 flowchart LR
-  subgraph multi["Multi-container"]
-    B["web-app"] -->|"POST /solve"| M["master"]
-    M ==>|"tasks"| W1["worker"]:::new
-    M ==>|"tasks"| W2["worker"]:::new
-    M ==>|"tasks"| W3["worker"]:::new
+  subgraph multi["Multi-container: brute force, three-opt"]
+    direction LR
+    B["web-app"] -->|"POST /solve"| M["master"]:::solver
+    M <-->|"tasks / results"| W1["worker"]:::worker
+    M <-->|"tasks / results"| W2["worker"]:::worker
+    M <-->|"tasks / results"| W3["worker"]:::worker
   end
-  subgraph single["Single container"]
-    A["web-app"] -->|"POST /solve"| S["algorithm service"]
+  subgraph single["Single container: nearest-neighbour, cheapest-insertion, dynamic programming"]
+    direction LR
+    A["web-app"] -->|"POST /solve"| S["algorithm service"]:::solver
   end
-  style multi fill:none,stroke:#7c3aed,stroke-width:2px,color:#7c3aed
-  classDef new fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+  classDef solver fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a
+  classDef worker fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
 ```
 
 ## Algorithms
