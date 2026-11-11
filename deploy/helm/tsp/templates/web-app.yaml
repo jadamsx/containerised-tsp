@@ -12,6 +12,12 @@ spec:
       labels:
         app: {{ .Release.Name }}-web-app
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: web-app
           image: {{ include "tsp.image" (dict "root" . "name" "web-app") }}
@@ -38,6 +44,8 @@ spec:
               path: /health
               port: {{ .Values.webApp.port }}
             initialDelaySeconds: 10
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
 ---
