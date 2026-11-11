@@ -27,10 +27,11 @@ async function talkToService(url, graph) {
 		if (solveResponse.message === "Request received and processing started.") {
 			console.log("Processing started. Waiting for result...");
 		}
+		const runId = solveResponse.id;
 		let result = null;
 		while (!result) {
 			await sleep(3000);
-			result = await sendAxiosGet(url + "/result");
+			result = await sendAxiosGet(`${url}/result?id=${runId}`);
 		}
 		console.log("Processing complete.");
 		return result;

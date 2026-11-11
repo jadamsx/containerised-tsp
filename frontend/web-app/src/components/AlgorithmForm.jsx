@@ -44,8 +44,8 @@ function AlgorithmForm() {
     formData.append("graphIndex", selectedGraph);
     if (customFile) formData.append("customGraph", customFile);
     try {
-      await axios.post("/test", formData);
-      navigate("/results");
+      const res = await axios.post("/test", formData);
+      navigate(`/results?id=${res.data.id}`);
     } catch {
       alert("Error submitting test");
     } finally {

@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const { randomUUID } = require("crypto");
 const multer = require("multer");
 const parseFile = require("./parse-file.cjs");
 const runTest = require("./run-tests.cjs");
@@ -10,7 +11,8 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const sharedGraphsDir = path.join(__dirname, "../graphs");
-let resultData = null;
+const maxStoredRuns = 50;
+const runs = new Map();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,9 +32,13 @@ app.get("/api/graphs", (req, res) => {
   res.json({ graphs });
 });
 
+// API: Health check
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 // API: Run algorithm test
 app.post("/test", upload.single("customGraph"), async (req, res) => {
-  resultData = null;
   try {
     let graph;
     if (req.body.graphIndex === "-1") {
@@ -44,8 +50,12 @@ app.post("/test", upload.single("customGraph"), async (req, res) => {
       const content = fs.readFileSync(path.join(sharedGraphsDir, files[parseInt(req.body.graphIndex)]), 'utf8');
       graph = JSON.parse(content);
     }
-    resultData = await runTest(graph, req.body.algorithm);
-    res.status(200).json({ ok: true });
+    const id = randomUUID();
+    runs.set(id, await runTest(graph, req.body.algorithm));
+    if (runs.size > maxStoredRuns) {
+      runs.delete(runs.keys().next().value);
+    }
+    res.status(200).json({ ok: true, id });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
@@ -54,9 +64,10 @@ app.post("/test", upload.single("customGraph"), async (req, res) => {
 
 // API: Get result
 app.get("/result", (req, res) => {
-  const result = resultData;
-  resultData = null;
-  res.json({ result });
+  if (!runs.has(req.query.id)) {
+    return res.status(404).json({ error: "Unknown run id." });
+  }
+  res.json({ result: runs.get(req.query.id) });
 });
 
 // Fallback: Serve React index.html for any other route
