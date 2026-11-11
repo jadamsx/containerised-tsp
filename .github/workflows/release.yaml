@@ -4,6 +4,9 @@ on:
   push:
     tags: [ 'v*' ]
 
+permissions:
+  contents: read
+
 env:
   REPOSITORY: ghcr.io/jadamsx/containerised-tsp
 
@@ -29,6 +32,10 @@ jobs:
 
     name: Release ${{ matrix.name }}
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -41,7 +48,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.BUILD_RELEASE }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build & Push
         uses: docker/build-push-action@v6
@@ -52,5 +59,6 @@ jobs:
           tags: |
             ${{ env.REPOSITORY }}/${{ matrix.name }}:${{ github.ref_name }}
             ${{ env.REPOSITORY }}/${{ matrix.name }}:latest
+          labels: org.opencontainers.image.source=https://github.com/jadamsx/containerised-tsp
           cache-from: type=gha,scope=${{ matrix.name }}
           cache-to: type=gha,mode=max,scope=${{ matrix.name }}
