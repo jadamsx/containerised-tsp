@@ -38,3 +38,10 @@ describe("Dynamic Programming Algorithm", () => {
     });
   }
 });
+
+describe("Dynamic Programming limit", () => {
+  it("Throws for more than 20 cities", () => {
+    const coordinates = Array.from({ length: 21 }, (_, i) => [i, i * i]);
+    expect(() => new DynamicProgrammingTSP({ coordinates }).solve()).to.throw(/at most 20/);
+  });
+});

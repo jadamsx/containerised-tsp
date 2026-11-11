@@ -31,6 +31,13 @@ describe("Dynamic-Programming-Service API", () => {
     expect(res.body).to.have.property("status", "ok");
   });
 
+  it("Rejects a graph with more than 20 cities", async function() {
+    const coordinates = Array.from({ length: 21 }, (_, i) => [i, i * i]);
+    const res = await chai.request(url).post("/solve").send({ graph: { coordinates } });
+    expect(res).to.have.status(400);
+    expect(res.body).to.have.property("error");
+  });
+
   for (const graph of graphs) {
     it(`Returns a valid tour and cost for ${graph.name}!`, function(done) {
       this.timeout(30000);

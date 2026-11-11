@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const { performance } = require("perf_hooks");
-const { DynamicProgrammingTSP } = require("./dynamic-programming");
+const { DynamicProgrammingTSP, MAX_CITIES } = require("./dynamic-programming");
 
 const app = express();
 const port = process.env.PORT || 3020;
@@ -29,6 +29,13 @@ app.post("/solve", (req, res) => {
    */
   const solveTSP = () => {
     const { graph } = req.body;
+
+    if (graph.coordinates.length > MAX_CITIES) {
+      res
+        .status(400)
+        .json({ error: `At most ${MAX_CITIES} cities are supported.` });
+      return;
+    }
 
     const startTime = performance.now();
     const dynamicProgrammingInstance = new DynamicProgrammingTSP(graph);
