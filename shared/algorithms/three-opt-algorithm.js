@@ -207,11 +207,11 @@ class ThreeOptTSP {
     let { initialTour, initialDistance } = this.getInitialTour();
     console.log("Initial Distance: ", initialDistance);
 
-    let { shortestTour, shortestDistance, possibleTours } =
+    let { shortestTour, shortestDist, possibleTours } =
       this.findPossibleTours(initialTour, initialDistance);
 
     let tasks = this.createTasks(possibleTours);
-    let totalDistance = shortestDistance;
+    let totalDistance = shortestDist;
     let tour = shortestTour;
 
     console.log("Tasks Created: ", possibleTours.length);
