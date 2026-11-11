@@ -23,7 +23,9 @@ fi
 
 for entry in "${images[@]}"; do
   read -r name dir <<<"$entry"
-  docker build -t "$repository/$name:$tag" "$dir"
+  if [[ -z "${SKIP_BUILD:-}" ]]; then
+    docker build -t "$repository/$name:$tag" "$dir"
+  fi
   k3d image import "$repository/$name:$tag" -c "$cluster"
 done
 
