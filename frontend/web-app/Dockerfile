@@ -4,8 +4,9 @@ WORKDIR /web-app
 
 COPY . .
 
-RUN npm install
+RUN npm ci
 RUN npm run build
+RUN npm prune --omit=dev
 
 ENV PORT=8080
 EXPOSE 8080

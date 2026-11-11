@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY src/ .
 
-RUN npm install
+RUN npm ci --omit=dev
 
 EXPOSE 3010
 
