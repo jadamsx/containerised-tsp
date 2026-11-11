@@ -14,26 +14,15 @@ class DynamicProgrammingTSP {
   }
 
   /**
-   * Generates a path based on the given index.
-   * @param {number} index - The index to generate the path for.
-   * @returns {number[]} - The generated path represented by an array of city indices.
+   * Precomputes the Euclidean distance between every pair of cities.
+   * @returns {number[][]} - Matrix where entry [i][j] is the distance from city i to city j.
    */
-  generatePath(index) {
-    const path = [0];
-    const availableCities = Array.from(Array(this.numCities - 1).keys()).map(
-      (i) => i + 1
-    ); // Exclude city 0
-
-    for (let j = this.numCities - 2; j >= 0; j--) {
-      const factorial = this.factorial(j);
-      const selectedCityIndex = Math.floor(index / factorial);
-      const selectedCity = availableCities.splice(selectedCityIndex, 1)[0];
-      path.push(selectedCity);
-      index %= factorial;
-    }
-
-    path.push(path[0]); // Add the starting city to the end to complete the loop
-    return path;
+  buildDistanceMatrix() {
+    return this.coordinates.map(([x1, y1]) =>
+      this.coordinates.map(([x2, y2]) =>
+        Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+      )
+    );
   }
 
   /**
@@ -58,45 +47,67 @@ class DynamicProgrammingTSP {
   }
 
   /**
-   * Calculates the factorial of a number.
-   * @param {number} n - The number to calculate the factorial of.
-   * @returns {number} - The factorial of the number.
-   */
-  factorial(n) {
-    if (n === 0 || n === 1) return 1;
-    let result = 1;
-    for (let i = 2; i <= n; i++) {
-      result *= i;
-    }
-    return result;
-  }
-
-  /**
-   * Solves the Traveling Salesman Problem by checking every possible path to find the shortest.
+   * Solves the Traveling Salesman Problem with the Held-Karp algorithm.
+   * Subsets of the cities 1..n-1 are bitmasks, and cost[subset][j] is the shortest
+   * path from city 0 through every city in the subset that ends at city j.
    * @returns {Object} - An object containing the shortest tour and the total distance of the tour.
    */
   solve() {
-    const possibilities = Math.ceil(this.factorial(this.numCities - 1));
-    let tour = null;
-    let totalDistance = Infinity;
+    const n = this.numCities;
+    if (n < 2) {
+      return { tour: [0, 0], totalDistance: 0 };
+    }
 
-    for (let index = 0; index < possibilities; index++) {
-      const path = this.generatePath(index);
-      const distance = this.calculatePathDistance(path);
+    const distances = this.buildDistanceMatrix();
+    const m = n - 1;
+    const full = (1 << m) - 1;
+    const cost = new Float64Array((full + 1) * m).fill(Infinity);
+    const parent = new Int32Array((full + 1) * m).fill(-1);
 
-      if (distance < totalDistance) {
-        totalDistance = distance;
-        tour = path;
-        console.log(
-          "New shortest found, on path: ",
-          index,
-          " out of :",
-          possibilities
-        );
+    for (let j = 0; j < m; j++) {
+      cost[(1 << j) * m + j] = distances[0][j + 1];
+    }
+
+    for (let subset = 1; subset <= full; subset++) {
+      for (let j = 0; j < m; j++) {
+        if (!(subset & (1 << j))) continue;
+        const current = cost[subset * m + j];
+
+        for (let next = 0; next < m; next++) {
+          if (subset & (1 << next)) continue;
+          const nextSubset = subset | (1 << next);
+          const candidate = current + distances[j + 1][next + 1];
+
+          if (candidate < cost[nextSubset * m + next]) {
+            cost[nextSubset * m + next] = candidate;
+            parent[nextSubset * m + next] = j;
+          }
+        }
       }
     }
 
-    return { tour, totalDistance };
+    let last = 0;
+    let shortest = Infinity;
+    for (let j = 0; j < m; j++) {
+      const candidate = cost[full * m + j] + distances[j + 1][0];
+      if (candidate < shortest) {
+        shortest = candidate;
+        last = j;
+      }
+    }
+
+    const path = [0];
+    let subset = full;
+    while (last !== -1) {
+      path.push(last + 1);
+      const previous = parent[subset * m + last];
+      subset ^= 1 << last;
+      last = previous;
+    }
+    path.push(0);
+
+    const tour = path.reverse();
+    return { tour, totalDistance: this.calculatePathDistance(tour) };
   }
 }
 
