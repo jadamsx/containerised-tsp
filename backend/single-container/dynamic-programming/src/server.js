@@ -1,12 +1,10 @@
 const express = require("express");
-const ip = require("ip");
 const path = require("path");
 const { performance } = require("perf_hooks");
 const { DynamicProgrammingTSP } = require("./dynamic-programming");
 
 const app = express();
-const ipAddress = ip.address();
-const ipPort = 3020;
+const port = process.env.PORT || 3020;
 
 app.use(express.json());
 
@@ -15,6 +13,10 @@ app.set("views", path.join(__dirname, "views"));
 
 app.get("/", (req, res) => {
   res.render("index");
+});
+
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
 app.post("/solve", (req, res) => {
@@ -44,4 +46,6 @@ app.post("/solve", (req, res) => {
   solveTSP();
 });
 
-app.listen(ipPort, console.log(`Listening to ${ipAddress}:${ipPort} !!!`));
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Listening on 0.0.0.0:${port}`);
+});

@@ -1,4 +1,3 @@
-const ip = require("ip");
 const express = require("express");
 const path = require("path");
 const { performance } = require("perf_hooks");
@@ -6,13 +5,15 @@ const { ThreeOptTSP } = require("./three-opt");
 
 const app = express();
 const queueApp = express();
-const ipAddress = ip.address();
-const ipPort = 3040;
+const port = process.env.PORT || 3040;
+const queuePort = process.env.QUEUE_PORT || 3041;
+const taskTimeout = Number(process.env.TASK_TIMEOUT_MS) || 5 * 60 * 1000;
 
-let result = null;
-let taskQueue = [];
-let resultQueue = [];
-let id;
+const workerTimeout = Number(process.env.WORKER_TIMEOUT_MS) || 30 * 1000;
+
+const runs = new Map();
+const workers = new Map();
+let latestRunId = null;
 
 app.use(express.json());
 queueApp.use(express.json());
@@ -28,52 +29,91 @@ app.get("/", (req, res) => {
 });
 
 /**
- * Endpoint to initiate a new solution.
+ * Reports that the master is up and how many workers are connected.
  * @param {Object} req - The HTTP request object.
  * @param {Object} res - The HTTP response object.
  */
-app.post("/solve", async (req, res) => {
-  result = null;
-  taskQueue = [];
-  resultQueue = [];
-  id = Math.random().toString(36).substr(2, 9);
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", workers: countWorkers() });
+});
 
-  res.json({ message: "Request received and processing started." });
-  solve(req.body.graph);
+/**
+ * Endpoint to initiate a new solution. Responds with the id of the run.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ */
+app.post("/solve", (req, res) => {
+  const graph = req.body.graph;
+  if (!graph || !Array.isArray(graph.coordinates)) {
+    res.status(400).json({ error: "A graph with coordinates is required." });
+    return;
+  }
+
+  const id = Math.random().toString(36).substr(2, 9);
+  const run = {
+    id,
+    startTime: performance.now(),
+    tasks: [],
+    resultQueue: [],
+    result: null,
+  };
+  runs.set(id, run);
+  latestRunId = id;
+
+  res.json({ message: "Request received and processing started.", id });
+  solve(graph, run);
   return;
 });
 
 /**
- * Endpoint to provide result data to the client.
+ * Endpoint to provide result data to the client. Uses the latest run when no id is given.
  * @param {Object} req - The HTTP request object.
  * @param {Object} res - The HTTP response object.
  */
 app.get("/result", (req, res) => {
-  res.json({ result: result });
-  result = null;  return;
+  const run = runs.get(req.query.id || latestRunId);
+
+  if (!run) {
+    if (req.query.id) {
+      res.status(404).json({ error: "Unknown run id." });
+    } else {
+      res.json({ result: null });
+    }
+    return;
+  }
+
+  if (run.result) {
+    runs.delete(run.id);
+  }
+  res.json({ result: run.result });
+  return;
 });
 
 /**
- * Retrieves the next task from the task queue.
+ * Retrieves the next task that is waiting for a worker, from any run.
  * @param {Object} req - The HTTP request object.
  * @param {Object} res - The HTTP response object.
  */
 queueApp.get("/getTask", (req, res) => {
-  for (let i = 0; i < taskQueue.length; i++) {
-    if (
-      !taskQueue[i].collected ||
-      (taskQueue[i].collected &&
-        getTimeout(taskQueue[i].collectionTime) &&
-        !taskQueue[i].completed)
-    ) {
-      console.log("Sending Task: ", taskQueue[i]);
+  const worker = req.query.worker;
+  if (worker) {
+    workers.set(worker, Date.now());
+  }
 
-      taskQueue[i].collected = true;
-      taskQueue[i].collectionTime = Date.now();
-      res.json({ task: taskQueue[i] });
+  for (const run of runs.values()) {
+    for (const task of run.tasks) {
+      if (
+        !task.completed &&
+        (!task.collected || getTimeout(task.collectionTime))
+      ) {
+        console.log("Sending Task: ", task);
 
-      taskQueue.push(taskQueue.splice(i, 1)[0]);
-      return;
+        task.collected = true;
+        task.collectionTime = Date.now();
+        task.worker = worker;
+        res.json({ task });
+        return;
+      }
     }
   }
   res.json({ task: false });
@@ -86,20 +126,33 @@ queueApp.get("/getTask", (req, res) => {
  * @param {Object} res - The HTTP response object.
  */
 queueApp.post("/returnTask", (req, res) => {
+  if (req.query.worker) {
+    workers.set(req.query.worker, Date.now());
+  }
+
   const result = req.body.result;
+  const run = result && runs.get(result.id);
 
-  if (result.id === id) {
-    resultQueue.push(result);
+  if (!run) {
+    res.sendStatus(404);
+    return;
+  }
 
-    console.log("Received Result: ", resultQueue.length);
+  const task = run.tasks[result.index];
+  if (!task) {
+    res.sendStatus(400);
+    return;
+  }
 
-    for (let i = taskQueue.length - 1; i >= 0; --i) {
-      if (taskQueue.index === result.index) {
-        taskQueue[i].completed = true;
-        taskQueue[i].completionTime = Date.now();
-        res.sendStatus(200);
-        return;
-      }
+  if (!task.completed) {
+    task.completed = true;
+    task.completionTime = Date.now();
+    run.resultQueue.push(result);
+
+    console.log("Received Result: ", run.resultQueue.length);
+
+    if (run.resultQueue.length === run.tasks.length) {
+      completeRun(run);
     }
   }
 
@@ -108,88 +161,76 @@ queueApp.post("/returnTask", (req, res) => {
 });
 
 /**
- * Run the 3-Opt Local Search algorithm.
+ * Runs the initial 3-Opt search and adds the remaining local searches to the run.
  * @param {Object} graph - The graph data.
+ * @param {Object} run - The run the tasks belong to.
  */
-async function solve(graph) {
+function solve(graph, run) {
   console.log("\n--New Solution Started--");
 
-  const startTime = performance.now();
-
-  const threeOptInstance = new ThreeOptTSP(graph);
-  let { initialTour, initialDistance } = threeOptInstance.getInitialTour();
-
-  console.log("Initial Distance: ", initialDistance);
-
-  let { shortestTour, shortestDist, possibleTours } =
-    threeOptInstance.findPossibleTours(initialTour, initialDistance);
-
-  const tasks = threeOptInstance.createTasks(possibleTours);
-
-  console.log(" Number Tasks Created: ", tasks.length);
-
   try {
-    addTasksToQueue(tasks, id);
+    const threeOptInstance = new ThreeOptTSP(graph);
+    const { initialTour, initialDistance } = threeOptInstance.getInitialTour();
 
-    const { shortestPath, shortestDistance } = await checkTasksCompletion(
-      shortestTour,
-      shortestDist
-    );
+    console.log("Initial Distance: ", initialDistance);
 
-    const endTime = performance.now();
+    const { shortestTour, shortestDist, possibleTours } =
+      threeOptInstance.findPossibleTours(initialTour, initialDistance);
 
-    const elapsedTime = endTime - startTime;
+    run.shortestTour = shortestTour;
+    run.shortestDist = shortestDist;
 
-    console.log("--Solution Complete--");
+    const tasks = threeOptInstance.createTasks(possibleTours);
 
-    result = {
-      Tour: shortestPath,
-      Cost: shortestDistance,
-      Time: elapsedTime,
-    };
+    console.log(" Number Tasks Created: ", tasks.length);
+
+    addTasksToRun(tasks, run);
+
+    if (tasks.length === 0) {
+      completeRun(run);
+    }
   } catch (error) {
     console.error("Error sending tasks to queue:", error);
-    res.status(500).json({ error: "Internal server error" });
+    runs.delete(run.id);
   }
 }
 
 /**
- * Periodically checks if all tasks are completed and finds the shortest path.
- *
- * @param {number[]} shortestPath - The shortest tour found so far represented by an array of city indices.
- * @param {number} shortestDistance - The total distance of the said tour.
- * @returns {Object} The shortest path and its distance.
+ * Finds the shortest path once every task of a run is completed.
+ * @param {Object} run - The run to complete.
  */
-async function checkTasksCompletion(shortestPath, shortestDistance) {
-  console.log("Waiting for Results");
+function completeRun(run) {
+  let shortestPath = run.shortestTour;
+  let shortestDistance = run.shortestDist;
 
-  while (resultQueue.length < taskQueue.length) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  }
-
-  for (const result of resultQueue) {
+  for (const result of run.resultQueue) {
     if (result.totalDistance < shortestDistance) {
       shortestDistance = result.totalDistance;
       shortestPath = result.tour;
     }
   }
-  return { shortestPath, shortestDistance };
+
+  console.log("--Solution Complete--");
+
+  run.result = {
+    Tour: shortestPath,
+    Cost: shortestDistance,
+    Time: performance.now() - run.startTime,
+  };
 }
 
 /**
- * Adds tasks to the task queue.
+ * Adds tasks to a run.
  * @param {Array} tasks - An array of tasks to be added.
- * @param {String} id - Unique identifier to match tasks to correct solution.
+ * @param {Object} run - The run the tasks belong to, its id matches results to the correct solution.
  */
-function addTasksToQueue(tasks, id) {
-  let count = 0;
-
+function addTasksToRun(tasks, run) {
   console.log("Adding Tasks to Queue");
 
-  for (task of tasks) {
-    taskQueue.push({
-      id: id,
-      index: count,
+  tasks.forEach((task, index) => {
+    run.tasks.push({
+      id: run.id,
+      index: index,
       tour: task.tour,
       totalDistance: task.totalDistance,
       data: task.data,
@@ -198,8 +239,38 @@ function addTasksToQueue(tasks, id) {
       collectionTime: null,
       completionTime: null,
     });
-    count++;
+  });
+}
+
+/**
+ * Counts the workers that polled recently or are still working on a task.
+ * @returns {number} The number of connected workers.
+ */
+function countWorkers() {
+  const connected = new Set();
+
+  for (const [worker, lastSeen] of workers) {
+    if (Date.now() - lastSeen > workerTimeout) {
+      workers.delete(worker);
+    } else {
+      connected.add(worker);
+    }
   }
+
+  for (const run of runs.values()) {
+    for (const task of run.tasks) {
+      if (
+        task.worker &&
+        task.collected &&
+        !task.completed &&
+        !getTimeout(task.collectionTime)
+      ) {
+        connected.add(task.worker);
+      }
+    }
+  }
+
+  return connected.size;
 }
 
 /**
@@ -208,19 +279,16 @@ function addTasksToQueue(tasks, id) {
  * @returns {boolean} Whether the task has timed out.
  */
 function getTimeout(collectionTime) {
-  const timeNow = Date.now();
-  const timeDifference = timeNow - collectionTime;
-  const timeDifferenceInMinutes = timeDifference / (1000 * 60);
-  let timeoutValue = 5;
-
-  return timeDifferenceInMinutes > timeoutValue;
+  return Date.now() - collectionTime > taskTimeout;
 }
 
-app.listen(
-  ipPort,
-  console.log(`Master listening to ${ipAddress}:${ipPort} !!!`)
-);
-queueApp.listen(
-  ipPort + 1,
-  console.log(`Master listening to ${ipAddress}:${ipPort + 1} !!!`)
-);
+if (require.main === module) {
+  app.listen(port, "0.0.0.0", () => {
+    console.log(`Master listening on 0.0.0.0:${port}`);
+  });
+  queueApp.listen(queuePort, "0.0.0.0", () => {
+    console.log(`Master queue listening on 0.0.0.0:${queuePort}`);
+  });
+}
+
+module.exports = { app, queueApp };

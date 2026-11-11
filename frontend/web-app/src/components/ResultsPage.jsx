@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import TourCanvas from "./TourCanvas";
 import axios from "axios";
 
@@ -7,12 +7,14 @@ function ResultsPage() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
 
   useEffect(() => {
     let isMounted = true;
     const fetchResult = async () => {
       try {
-        const res = await axios.get("/result");
+        const res = await axios.get("/result", { params: { id } });
         if (res.data.result) {
           if (isMounted) {
             setResult(res.data.result);
@@ -27,7 +29,7 @@ function ResultsPage() {
     };
     fetchResult();
     return () => { isMounted = false; };
-  }, []);
+  }, [id]);
 
   if (loading) {
     return <div><h1>Test Result</h1><p>Loading...</p></div>;

@@ -8,8 +8,8 @@ export const submitTest = (algorithm, graphIndex, customFile) => {
   return axios.post("/test", formData);
 };
 
-export const fetchResult = () => {
-  return axios.get("/result");
+export const fetchResult = (id) => {
+  return axios.get("/result", { params: { id } });
 };
 
 export const fetchGraphs = () => {

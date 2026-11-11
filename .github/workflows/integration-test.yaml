@@ -18,11 +18,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install --prefix backend/multi-container/brute-force
-          npm install --prefix backend/multi-container/three-opt
-          npm install --prefix backend/single-container/dynamic-programming
-          npm install --prefix backend/single-container/cheapest-insertion
-          npm install --prefix backend/single-container/nearest-neighbour
+          npm ci --prefix backend/multi-container/brute-force
+          npm ci --prefix backend/multi-container/three-opt
+          npm ci --prefix backend/single-container/dynamic-programming
+          npm ci --prefix backend/single-container/cheapest-insertion
+          npm ci --prefix backend/single-container/nearest-neighbour
 
       - name: Run Brute Force integration tests
         run: npx mocha backend/multi-container/brute-force/test/integrationTest.js
