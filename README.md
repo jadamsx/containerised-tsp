@@ -25,8 +25,6 @@ flowchart LR
     direction LR
     A["web-app"] -->|"POST /solve"| S["algorithm service"]:::solver
   end
-  style single fill:none,stroke:#7c3aed,stroke-width:2px,color:#7c3aed
-  style multi fill:none,stroke:#7c3aed,stroke-width:2px,color:#7c3aed
   classDef solver fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#1e3a8a
   classDef worker fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
 ```
