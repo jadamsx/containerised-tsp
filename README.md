@@ -29,7 +29,8 @@ containerised-tsp/
 ├── shared/
 │   ├── algorithms/              # Core algorithm implementations
 │   └── graphs/                  # Test graph datasets
-└── infra/                       # Kubernetes and deployment configs
+├── deploy/helm/tsp/             # Helm chart
+└── scripts/                     # k3d up/down/smoke scripts
 ```
 
 ## Quick Start
@@ -37,7 +38,17 @@ containerised-tsp/
 ### Prerequisites
 - Node.js (v22) and npm
 - Docker (for containerized deployment)
-- Kubernetes cluster (for distributed deployment)
+- Any Kubernetes cluster and Helm (for distributed deployment); k3d for running it locally
+
+### Kubernetes
+
+```bash
+scripts/k3d-up.sh      # k3d cluster "tsp", local images, helm install
+scripts/k3d-smoke.sh   # one solve per algorithm through the web app
+scripts/k3d-down.sh
+```
+
+On another cluster, `helm install tsp deploy/helm/tsp` pulls the published images. Worker counts are `masters.<name>.workers` in `values.yaml`. The earlier minikube Terraform is in the `uni-submission` tag.
 
 ### Local Development
 
