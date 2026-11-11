@@ -26,6 +26,12 @@ function calculateAccuracy(expectedCost, calculatedCost) {
 
 
 describe("Nearest-Neighbor-service API", () => {
+  it("Reports it is healthy on /health", async function() {
+    const res = await chai.request(url).get("/health");
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property("status", "ok");
+  });
+
   for (const graph of graphs) {
     it(`Returns a valid tour and cost for ${graph.name}!`, function(done) {
       this.timeout(30000);

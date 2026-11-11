@@ -26,6 +26,13 @@ function calculateAccuracy(expectedCost, calculatedCost) {
 
 
 describe("ThreeOpt-Service  API", () => {
+  it("Reports the connected workers on /health", async function() {
+    const res = await chai.request(url).get("/health");
+    expect(res).to.have.status(200);
+    expect(res.body).to.have.property("status", "ok");
+    expect(res.body.workers).to.be.a("number");
+  });
+
   for (const graph of graphs) {
     it(`Returns the most optimal tour and its cost for ${graph.name}!`, function(done) {
       this.timeout(30000);

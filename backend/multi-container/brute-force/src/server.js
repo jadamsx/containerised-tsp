@@ -9,7 +9,10 @@ const port = process.env.PORT || 3030;
 const queuePort = process.env.QUEUE_PORT || 3031;
 const taskTimeout = Number(process.env.TASK_TIMEOUT_MS) || 5 * 60 * 1000;
 
+const workerTimeout = Number(process.env.WORKER_TIMEOUT_MS) || 30 * 1000;
+
 const runs = new Map();
+const workers = new Map();
 let latestRunId = null;
 
 app.use(express.json());
@@ -23,6 +26,15 @@ app.set("views", path.join(__dirname, "views"));
  */
 app.get("/", (req, res) => {
   res.render("index");
+});
+
+/**
+ * Reports that the master is up and how many workers are connected.
+ * @param {Object} req - The HTTP request object.
+ * @param {Object} res - The HTTP response object.
+ */
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", workers: countWorkers() });
 });
 
 /**
@@ -83,6 +95,11 @@ app.get("/result", (req, res) => {
  * @param {Object} res - The HTTP response object.
  */
 queueApp.get("/getTask", (req, res) => {
+  const worker = req.query.worker;
+  if (worker) {
+    workers.set(worker, Date.now());
+  }
+
   for (const run of runs.values()) {
     for (const task of run.tasks) {
       if (
@@ -93,6 +110,7 @@ queueApp.get("/getTask", (req, res) => {
 
         task.collected = true;
         task.collectionTime = Date.now();
+        task.worker = worker;
         res.json({ task });
         return;
       }
@@ -108,6 +126,10 @@ queueApp.get("/getTask", (req, res) => {
  * @param {Object} res - The HTTP response object.
  */
 queueApp.post("/returnTask", (req, res) => {
+  if (req.query.worker) {
+    workers.set(req.query.worker, Date.now());
+  }
+
   const result = req.body.result;
   const run = result && runs.get(result.id);
 
@@ -204,6 +226,37 @@ function addTasksToRun(tasks, run) {
       completionTime: null,
     });
   });
+}
+
+/**
+ * Counts the workers that polled recently or are still working on a task.
+ * @returns {number} The number of connected workers.
+ */
+function countWorkers() {
+  const connected = new Set();
+
+  for (const [worker, lastSeen] of workers) {
+    if (Date.now() - lastSeen > workerTimeout) {
+      workers.delete(worker);
+    } else {
+      connected.add(worker);
+    }
+  }
+
+  for (const run of runs.values()) {
+    for (const task of run.tasks) {
+      if (
+        task.worker &&
+        task.collected &&
+        !task.completed &&
+        !getTimeout(task.collectionTime)
+      ) {
+        connected.add(task.worker);
+      }
+    }
+  }
+
+  return connected.size;
 }
 
 /**

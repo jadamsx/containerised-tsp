@@ -10,6 +10,7 @@ const { spawn } = require("child_process");
 const { ThreeOptTSP } = require("../src/three-opt");
 
 process.env.TASK_TIMEOUT_MS = "100";
+process.env.WORKER_TIMEOUT_MS = "100";
 const { app, queueApp } = require("../src/server");
 
 chai.use(chaiHttp);
@@ -118,6 +119,20 @@ describe("Master", () => {
     }
     const res = await chai.request(app).get(`/result?id=${id}`);
     expect(res.body.result).to.have.property("Cost");
+  });
+
+  it("reports connected workers on /health", async function() {
+    let res = await chai.request(app).get("/health");
+    expect(res).to.have.status(200);
+    expect(res.body).to.deep.equal({ status: "ok", workers: 0 });
+
+    await chai.request(queueApp).get("/getTask?worker=w1");
+    res = await chai.request(app).get("/health");
+    expect(res.body.workers).to.equal(1);
+
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    res = await chai.request(app).get("/health");
+    expect(res.body.workers).to.equal(0);
   });
 
   it("rejects results for an unknown run", async function() {

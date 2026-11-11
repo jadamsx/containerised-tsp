@@ -15,6 +15,10 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
 app.post("/solve", (req, res) => {
   /**
    * Solves the Traveling Salesman Problem (TSP) using the Cheapest Insertion algorithm.
